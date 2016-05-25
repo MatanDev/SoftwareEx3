@@ -6,6 +6,7 @@ typedef struct node_t {
 	struct node_t* next;
 	struct node_t* previous;
 }*Node;
+
 Node createNode(Node previous, Node next, SPListElement element);
 void destroyNode(Node node);
 

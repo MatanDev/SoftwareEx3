@@ -4,6 +4,7 @@
 
 //Checks if copy Works
 bool pointBasicCopyTest() {
+	int i;
 	double data[2] = { 1.0, 1.0 };
 	int dim = 2;
 	int index = 1;
@@ -11,7 +12,7 @@ bool pointBasicCopyTest() {
 	SPPoint q = spPointCopy(p);
 	ASSERT_TRUE(spPointGetIndex(p) == spPointGetIndex(q));
 	ASSERT_TRUE(spPointGetDimension(p) == spPointGetDimension(q));
-	for (int i = 0; i < spPointGetDimension(p); i++) {
+	for (i = 0; i < spPointGetDimension(p); i++) {
 		ASSERT_TRUE(spPointGetAxisCoor(p, i) == spPointGetAxisCoor(q, i));
 	}
 	spPointDestroy(p);
