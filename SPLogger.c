@@ -10,8 +10,8 @@
 #define INFO_MSG  "---INFO---\n"
 #define DEBUG_MSG  "---DEBUG---\n"
 
-#define GENERAL_MESSAGE_SKELETON "%s- file: %s\n- function: %s\n- line: %d\n- message: %s\n"
-#define SHORT_MESSAGE_SKELETON "%s- message: %s\n"
+#define GENERAL_MESSAGE_SKELETON "%s- file: %s\n- function: %s\n- line: %d\n- message: %s"
+#define SHORT_MESSAGE_SKELETON "%s- message: %s"
 
 //File open mode
 #define SP_LOGGER_OPEN_MODE "w"
@@ -81,17 +81,18 @@ SP_LOGGER_MSG spLoggerPrintFormmatedString(const char* msg, ...){ //TODO - Verif
     va_list args;
     va_start(args, msg);
 
-	if (vfprintf(logger->outputChannel,msg, args) < 0)
+	if (vfprintf(logger->outputChannel, msg, args) < 0)
 		return SP_LOGGER_WRITE_FAIL;
-    va_end(args);
 
-	if (fprintf(logger->outputChannel,"\n") < 0) // prints a new line
+	va_end(args);
+
+	if (fprintf(logger->outputChannel, "\n") < 0) // prints a new line
 		return SP_LOGGER_WRITE_FAIL;
 
 	return SP_LOGGER_SUCCESS;
 }
 
-SP_LOGGER_MSG spLoggerPrintMsg(const char* msg){
+SP_LOGGER_MSG spLoggerPrintMsg(const char* msg) {
 	return spLoggerPrintFormmatedString(msg);
 }
 
@@ -100,9 +101,8 @@ SP_LOGGER_MSG spLoggerPrintMsg(const char* msg){
  * assumption - logType not null
  * @param logType - the enum item to be translated
  */
-const char* getLoggerNameFromType(enum sp_logger_level_t logType){
-	assert(logType);
-	switch(logType){
+const char* getLoggerNameFromType(enum sp_logger_level_t logType) {
+	switch(logType) {
 		case SP_LOGGER_ERROR_LEVEL:
 			return ERROR_MSG;
 		case SP_LOGGER_WARNING_ERROR_LEVEL:
@@ -119,30 +119,11 @@ const char* getLoggerNameFromType(enum sp_logger_level_t logType){
 
 /*
  * This method gets log level enum and returns true iff it should write the log to the file
- * assumption - logType not null and logger is not null
+ * assumption - logger is not null, enum sp_logger_level_t is ordered according to write priviliges
  * @param logType - the enum item to be verified
  */
-int verifyWritePrivileges(enum sp_logger_level_t logType){
-	assert(logType);
-	assert(logger);
-	switch(logType){
-		case SP_LOGGER_ERROR_LEVEL:
-			return 1;
-		case SP_LOGGER_WARNING_ERROR_LEVEL:
-			if (logger->level != SP_LOGGER_ERROR_LEVEL)
-				return 1;
-			return 0;
-		case SP_LOGGER_INFO_WARNING_ERROR_LEVEL:
-			if (logger->level != SP_LOGGER_ERROR_LEVEL && logger->level != SP_LOGGER_WARNING_ERROR_LEVEL)
-				return 1;
-			return 0;
-		case SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL:
-			if (logger->level == SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL)
-				return 1;
-			return 0;
-		default:
-			return 0;
-	}
+bool verifyWritePrivileges(enum sp_logger_level_t logType) {
+	return (logType <= logger->level);
 }
 
 
@@ -182,45 +163,37 @@ int verifyWritePrivileges(enum sp_logger_level_t logType){
  * SP_LOGGER_SUCCESS			- otherwise
  */
 SP_LOGGER_MSG spLoggerPrint(enum sp_logger_level_t logType, const char* msg, const char* file,
-		const char* function, const int line)
-{
+		const char* function, const int line) {
 	if (!logger)
 		return SP_LOGGER_UNDIFINED;
-	if (!msg || !file || !function || line < 0)
+	if (!msg || !file || !function || line < 0) // TODO - check if we need to check the args first or the privilege
 		return SP_LOGGER_INVAlID_ARGUMENT;
 	if (!verifyWritePrivileges(logType))
-	{
 		return SP_LOGGER_SUCCESS;
-	}
 	return spLoggerPrintFormmatedString(GENERAL_MESSAGE_SKELETON,getLoggerNameFromType(logType), file,function,line,msg);
 }
 
 SP_LOGGER_MSG spLoggerPrintError(const char* msg, const char* file,
-		const char* function, const int line)
-{
+		const char* function, const int line) {
 	return spLoggerPrint(SP_LOGGER_ERROR_LEVEL, msg,file,function,line);
 }
 
 SP_LOGGER_MSG spLoggerPrintWarning(const char* msg, const char* file,
-		const char* function, const int line)
-{
+		const char* function, const int line) {
 	return spLoggerPrint(SP_LOGGER_WARNING_ERROR_LEVEL, msg,file,function,line);
 }
 
-SP_LOGGER_MSG spLoggerPrintInfo(const char* msg){
+SP_LOGGER_MSG spLoggerPrintInfo(const char* msg) {
 	if (!logger)
 		return SP_LOGGER_UNDIFINED;
 	if (!msg)
 		return SP_LOGGER_INVAlID_ARGUMENT;
 	if (!verifyWritePrivileges(SP_LOGGER_INFO_WARNING_ERROR_LEVEL))
-	{
 		return SP_LOGGER_SUCCESS;
-	}
 	return spLoggerPrintFormmatedString(SHORT_MESSAGE_SKELETON,INFO_MSG,msg);
 }
 
 SP_LOGGER_MSG spLoggerPrintDebug(const char* msg, const char* file,
-		const char* function, const int line)
-{
+		const char* function, const int line) {
 	return spLoggerPrint(SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL, msg,file,function,line);
 }

@@ -70,9 +70,99 @@ static bool basicLoggerDebugTest() {
 	return true;
 }
 
+//Only Errors and Warnings should be printed
+static bool basicLoggerWarningTest() {
+	const char* expectedFile = "basicLoggerWarningTestExp.log";
+	const char* testFile = "basicLoggerWarningTest.log";
+	ASSERT_TRUE(spLoggerCreate(testFile,SP_LOGGER_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintInfo("MSGC") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	spLoggerDestroy();
+	ASSERT_TRUE(identicalFiles(testFile,expectedFile));
+	return true;
+}
+
+//All messages but Info messages should be printed in debug level
+static bool basicLoggerInfoTest() {
+	const char* expectedFile = "basicLoggerInfoTestExp.log";
+	const char* testFile = "basicLoggerInfoTest.log";
+	ASSERT_TRUE(spLoggerCreate(testFile,SP_LOGGER_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintInfo("MSGC") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	spLoggerDestroy();
+	ASSERT_TRUE(identicalFiles(testFile,expectedFile));
+	return true;
+}
+
+static bool basicLoggerUndefinedTest() {
+	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_UNDIFINED);
+	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_UNDIFINED);
+	ASSERT_TRUE(spLoggerPrintInfo("MSGC") == SP_LOGGER_UNDIFINED);
+	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_UNDIFINED);
+	ASSERT_TRUE(spLoggerPrintMsg("MSGE") == SP_LOGGER_UNDIFINED);
+	return true;
+}
+
+static bool basicLoggerInvalidArgumentsTest() {
+	const char* testFile = "basicLoggerTest.log";
+	ASSERT_TRUE(spLoggerCreate(testFile,SP_LOGGER_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintError("MSGA",NULL,__func__,__LINE__) == SP_LOGGER_INVAlID_ARGUMENT);
+	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",NULL,__LINE__) == SP_LOGGER_INVAlID_ARGUMENT);
+	ASSERT_TRUE(spLoggerPrintInfo(NULL) == SP_LOGGER_INVAlID_ARGUMENT);
+	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,-1) == SP_LOGGER_INVAlID_ARGUMENT);
+	ASSERT_TRUE(spLoggerPrintMsg(NULL) == SP_LOGGER_INVAlID_ARGUMENT);
+	spLoggerDestroy();
+	return true;
+}
+
+static bool basicLoggerPrintMsgTest() {
+	const char* expectedFile = "basicLoggerPrintMsgTestExp.log";
+	const char* testFile = "basicLoggerPrintMsgTest.log";
+	ASSERT_TRUE(spLoggerCreate(testFile,SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg1") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintInfo("MSGC") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg2") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg3") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg4") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg5") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintDebug("","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	spLoggerDestroy();
+	ASSERT_TRUE(identicalFiles(testFile,expectedFile));
+	return true;
+}
+
+static bool basicLoggerStdoutTest() {
+	ASSERT_TRUE(spLoggerCreate(NULL,SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg1") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintInfo("MSGC") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg2") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg3") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg4") == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
+	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg5") == SP_LOGGER_SUCCESS);
+	spLoggerDestroy();
+	return true;
+}
+
 int main() {
 	RUN_TEST(basicLoggerTest);
 	RUN_TEST(basicLoggerErrorTest);
 	RUN_TEST(basicLoggerDebugTest);
+	RUN_TEST(basicLoggerWarningTest);
+	RUN_TEST(basicLoggerInfoTest);
+	RUN_TEST(basicLoggerUndefinedTest);
+	RUN_TEST(basicLoggerInvalidArgumentsTest);
+	RUN_TEST(basicLoggerPrintMsgTest);
+	//RUN_TEST(basicLoggerStdoutTest);
 	return 0;
 }
