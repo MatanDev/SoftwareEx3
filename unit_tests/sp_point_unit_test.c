@@ -35,6 +35,7 @@ bool pointBasicL2Distance() {
 	spPointDestroy(q);
 	return true;
 }
+
 int main() {
 	RUN_TEST(pointBasicCopyTest);
 	RUN_TEST(pointBasicL2Distance);
