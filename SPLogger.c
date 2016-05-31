@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdarg.h>
-#include <assert.h>
 
 #define ERROR_MSG "---ERROR---\n"
 #define WARNING_MSG  "---WARNING---\n"

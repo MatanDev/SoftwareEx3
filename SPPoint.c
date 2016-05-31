@@ -3,7 +3,13 @@
 #include <assert.h>
 
 //TODO - choose a convention regarding null comparison
-//TODO - check if we should remove our assertions
+
+/*
+ * A structure used for the point data type
+ * data - an array of the axis data of the point
+ * dim - an integer representing the dimension of the point
+ * index -  an integer representing the image index related to the point
+ */
 struct sp_point_t {
 	double* data;
 	int dim;
@@ -14,12 +20,19 @@ struct sp_point_t {
  * creates a new double array with the same values of the given array
  * @data - the source array to be copied
  * @size - the size of the array
+ *
+ * @returns
+ * NULL if data is NULL or size < 0, otherwise a hard copy of the given array
  */
 double* copyData(double* data, int size)
 {
-	assert(data != NULL);
 	int i;
-	double* newData = (double*)calloc(size,sizeof(double));
+	double* newData;
+
+	if (data == NULL || size < 0)
+		return NULL;
+
+	newData = (double*)calloc(size,sizeof(double));
 
 	if (!newData)
 		return NULL;
@@ -99,7 +112,6 @@ double spPointL2SquaredDistance(SPPoint p, SPPoint q){
 	for (dimIndex = 0;dimIndex < p->dim ; dimIndex++){
 		currentDist = p->data[dimIndex]-q->data[dimIndex];
 		l2Dist += currentDist * currentDist;
-		assert (l2Dist >= 0); // verify that no overflow occurred
 	}
 
 	return l2Dist;
