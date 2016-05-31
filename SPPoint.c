@@ -3,30 +3,12 @@
 #include <assert.h>
 
 //TODO - choose a convention regarding null comparison
+//TODO - check if we should remove our assertions
 struct sp_point_t {
 	double* data;
 	int dim;
 	int index;
 };
-
-SPPoint spPointCreate(double* data, int dim, int index){ //TODO - check if we should duplicate the data
-	if (!data) //data is null
-		return NULL;
-	if (dim <= 0) //dimension illegal
-		return NULL;
-	if (index <0) //index illegal
-		return NULL;
-
-	SPPoint item = (SPPoint)calloc(1,sizeof(struct sp_point_t));
-	if (!item) // allocation error
-		return NULL;
-
-	item->data = data;
-	item->dim = dim;
-	item->index = index;
-
-	return item;
-}
 
 /*
  * creates a new double array with the same values of the given array
@@ -38,17 +20,35 @@ double* copyData(double* data, int size)
 	assert(data != NULL);
 	int i;
 	double* newData = (double*)calloc(size,sizeof(double));
+
 	if (!newData)
 		return NULL;
 
 	for (i=0;i<size;i++)
-	{
 		newData[i] = data[i];
-	}
 
 	return newData;
 }
 
+SPPoint spPointCreate(double* data, int dim, int index){
+	if (!data) //data is null
+		return NULL;
+	if (dim <= 0) //dimension illegal
+		return NULL;
+	if (index <0) //index illegal
+		return NULL;
+	SPPoint item = (SPPoint)calloc(1,sizeof(struct sp_point_t));
+	if (!item) // allocation error
+		return NULL;
+
+	item->data = copyData(data,dim);
+	if (item->data == NULL)
+		return NULL; //allocation error
+	item->dim = dim;
+	item->index = index;
+
+	return item;
+}
 
 SPPoint spPointCopy(SPPoint source){
 	assert (source != NULL);
@@ -57,7 +57,6 @@ SPPoint spPointCopy(SPPoint source){
 		return NULL;
 	return spPointCreate(dataCopy,source->dim,source->index);
 }
-
 
 void spPointDestroy(SPPoint point)
 {
