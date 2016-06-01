@@ -28,20 +28,17 @@ static bool testBPQueueCopy() {
 	SPBPQueue copy = spBPQueueCopy(queue);
 	ASSERT_TRUE(copy != NULL);
 	ASSERT_TRUE(0 == spBPQueueSize(copy));
-	ASSERT_TRUE(spBPQueueIsEmpty(copy));
 	SPListElement e1 = spListElementCreate(1, 1.0);
 	SPListElement e2 = spListElementCreate(2, 2.0);
 	SPListElement e3 = spListElementCreate(3, 3.0);
 	SPListElement e4 = spListElementCreate(4, 4.0);
 	spBPQueueEnqueue(queue, e1);
 	ASSERT_TRUE(0 == spBPQueueSize(copy));
-	SPBPQueue queue2 = quickQueue(4, 4, e4, e1, e3, e2);
-	//SPBPQueue queue2 = quickQueue(4, e1, e2, e3, e4);
-	printf("%d\n", spBPQueueSize(queue2));
+	SPBPQueue queue2 = quickQueue(17, 4, e4, e1, e3, e2);
 	SPBPQueue copy2 = spBPQueueCopy(queue2);
-	printf("%d\n", spBPQueueSize(copy2));
+	ASSERT_TRUE(spBPQueueMaxValue(queue2) == spBPQueueMaxValue(copy2));
 	ASSERT_TRUE(4 == spBPQueueSize(copy2));
-	ASSERT_TRUE(spBPQueueIsFull(copy2));
+	ASSERT_TRUE(17 == spBPQueueGetMaxSize(copy2));
 	ASSERT_TRUE(spListElementCompare(e1, spBPQueuePeek(copy2)) == 0);
 	ASSERT_TRUE(spBPQueueDequeue(copy2) == SP_BPQUEUE_SUCCESS);
 	ASSERT_TRUE(!spBPQueueIsFull(copy2));
@@ -99,9 +96,10 @@ static bool testBPQueueMaxSize() {
 }
 
 
-static bool testBPQueuePeek() {
+static bool testBPQueuePeekFirstandLast() {
 	SPBPQueue queue = spBPQueueCreate(0);
 	ASSERT_TRUE(spBPQueuePeek(queue) == NULL);
+	ASSERT_TRUE(spBPQueuePeekLast(queue) == NULL);
 	SPListElement e1 = spListElementCreate(1, 1.0);
 	SPListElement e2 = spListElementCreate(2, 2.0);
 	SPListElement e3 = spListElementCreate(3, 3.0);
@@ -110,23 +108,6 @@ static bool testBPQueuePeek() {
 	SPListElement first = spBPQueuePeek(queue2);
 	ASSERT_TRUE(spListElementCompare(e1, first) == 0);
 	ASSERT_TRUE(spListElementCompare(first, spBPQueuePeek(queue2)) == 0);
-	spBPQueueDestroy(queue);
-	spBPQueueDestroy(queue2);
-	spListElementDestroy(e1);
-	spListElementDestroy(e2);
-	spListElementDestroy(e3);
-	spListElementDestroy(e4);
-	return true;
-}
-
-static bool testBPQueuePeekLast() {
-	SPBPQueue queue = spBPQueueCreate(0);
-	ASSERT_TRUE(spBPQueuePeekLast(queue) == NULL);
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPBPQueue queue2 = quickQueue(5, 4, e2, e3, e1, e4);
 	SPListElement last = spBPQueuePeekLast(queue2);
 	ASSERT_TRUE(spListElementCompare(e4, last) == 0);
 	ASSERT_TRUE(spListElementCompare(last, spBPQueuePeekLast(queue2)) == 0);
@@ -139,12 +120,60 @@ static bool testBPQueuePeekLast() {
 	return true;
 }
 
+static bool testBPQueueMinMaxValue() {
+	SPBPQueue queue = spBPQueueCreate(0);
+	ASSERT_TRUE(spBPQueueMinValue(queue) == -1);
+	ASSERT_TRUE(spBPQueueMaxValue(queue) == -1);
+	SPListElement e1 = spListElementCreate(1, 1.0);
+	SPListElement e2 = spListElementCreate(2, 2.0);
+	SPListElement e3 = spListElementCreate(3, 3.0);
+	SPListElement e4 = spListElementCreate(4, 4.0);
+	SPBPQueue queue2 = quickQueue(5, 4, e2, e3, e1, e4);
+	ASSERT_TRUE(spBPQueueMinValue(queue2) == 1);
+	ASSERT_TRUE(spBPQueueMaxValue(queue2) == 4);
+	spBPQueueDestroy(queue);
+	spBPQueueDestroy(queue2);
+	spListElementDestroy(e1);
+	spListElementDestroy(e2);
+	spListElementDestroy(e3);
+	spListElementDestroy(e4);
+	return true;
+}
+
+static bool testBPQueueClear() {
+	SPListElement e1 = spListElementCreate(1, 1.0);
+	SPListElement e2 = spListElementCreate(2, 2.0);
+	SPListElement e3 = spListElementCreate(3, 3.0);
+	SPListElement e4 = spListElementCreate(4, 4.0);
+	SPBPQueue queue = quickQueue(7, 4, e3, e4, e2, e1);
+	spBPQueueClear(queue);
+	ASSERT_TRUE(0 == spBPQueueSize(queue));
+	ASSERT_TRUE(7 == spBPQueueGetMaxSize(queue));
+	SPBPQueue queue2 = spBPQueueCreate(19);
+	spBPQueueClear(queue2);
+	ASSERT_TRUE(0 == spBPQueueSize(queue2));
+	spBPQueueDestroy(queue);
+	spBPQueueDestroy(queue2);
+	spListElementDestroy(e1);
+	spListElementDestroy(e2);
+	spListElementDestroy(e3);
+	spListElementDestroy(e4);
+	return true;
+}
+
+static bool testBPQueueDestroy() {
+	spBPQueueDestroy(NULL);
+	return true;
+}
+
 int main() {
 	RUN_TEST(testBPQueueCreate);
 	RUN_TEST(testBPQueueCopy);
 	RUN_TEST(testBPQueueSize);
 	RUN_TEST(testBPQueueMaxSize);
-	RUN_TEST(testBPQueuePeek);
-	RUN_TEST(testBPQueuePeekLast);
+	RUN_TEST(testBPQueuePeekFirstandLast);
+	RUN_TEST(testBPQueueMinMaxValue);
+	RUN_TEST(testBPQueueClear);
+	RUN_TEST(testBPQueueDestroy);
 	return 0;
 }
