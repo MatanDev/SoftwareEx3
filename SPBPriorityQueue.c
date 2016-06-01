@@ -146,7 +146,7 @@ SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement
  *  @param source - the given queue from which we should remove the last item
  *  @param currElemInQueue - a pointer to the current iterator of the internal list in the queue
  */
-void spBPQueueHandleFullCapacity(SPBPQueue source, SPListElement currElemInQueue) {
+void spBPQueueHandleFullCapacity2(SPBPQueue source, SPListElement currElemInQueue) {
 	int i;
 	SPListElement temp;
 	currElemInQueue = spListGetFirst(source->queue);
@@ -171,9 +171,9 @@ void spBPQueueHandleFullCapacity(SPBPQueue source, SPListElement currElemInQueue
 
 }
 
-void spBPQueueHandleFullCapacityold(SPBPQueue source, SPListElement currElemInQueue) {
+void spBPQueueHandleFullCapacity(SPBPQueue source, SPListElement currElemInQueue) {
 	SPListElement prevElemInQueue;
-	int i;
+	//int i;
 	SP_LIST_MSG listMessage;
 	assert(currElemInQueue != NULL); //TODO - remove at production
 	assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
@@ -188,7 +188,6 @@ void spBPQueueHandleFullCapacityold(SPBPQueue source, SPListElement currElemInQu
 		currElemInQueue = spListGetNext(source->queue);
 		assert(currElemInQueue!=NULL);
 	}*/
-	/*
 	 while (//currElemInQueue!= NULL &&
 
 	  spListElementCompare(currElemInQueue, source->maxElement) < 0)
@@ -218,16 +217,15 @@ void spBPQueueHandleFullCapacityold(SPBPQueue source, SPListElement currElemInQu
 				spListElementGetIndex(source->maxElement),
 				spListElementGetValue(source->maxElement)
 				);
-	}*/
+	}
 
 	/*printf("1] prev : { %d : %f } -------  maxElement : { %d : %f }\n",
 					spListElementGetIndex(prevElemInQueue),
 					spListElementGetValue(prevElemInQueue),
 					spListElementGetIndex(source->maxElement),
 					spListElementGetValue(source->maxElement)
-					);*/
-//	sleep(10);
-
+					);
+*/
 	//TODO - decide what to do with invalid current regarding spListRemoveCurrent
 	assert(currElemInQueue!=NULL);
 	assert(source->queue);
@@ -383,8 +381,10 @@ SP_BPQUEUE_MSG spBPQueueDequeue(SPBPQueue source) {
 		return SP_BPQUEUE_EMPTY;
 
 	// if we have 1 items -> last is first -> we should free its pointer
-	if (spBPQueueSize(source) == 1)
+	if (spBPQueueSize(source) == 1) {
+		spListElementDestroy(source->maxElement);
 		source->maxElement = NULL;
+	}
 
 	actionStatus = spListRemoveCurrent(source->queue);
 
@@ -409,18 +409,34 @@ SPListElement spBPQueuePeekLast(SPBPQueue source)
 	return spListElementCopy(source->maxElement);
 }
 
-double spBPQueueMinValue(SPBPQueue source)
-{
+/*
+ * The method returns an element value, given a queue and a
+ * function pointer that extract some element from it
+ * Pre Assumptions - if the source is not NULL than func(source) != NULL
+ * @param source - the given queue to extract the data from
+ * @param func - a function pointer that given a queue, extract some element from it
+ * @return
+ * -1 if source is NULL, otherwise the func(source) value.
+ */
+double returnValueFrom(SPBPQueue source, SPListElement (*func)(SPBPQueue)){
+	SPListElement item;
+	double returnValue;
 	if (source == NULL)
 		return -1;
-	return spListElementGetValue(spBPQueuePeek(source));
+	item = (*func)(source);
+	returnValue = spListElementGetValue(item);
+	spListElementDestroy(item);
+	return returnValue;
+}
+
+double spBPQueueMinValue(SPBPQueue source)
+{
+	return returnValueFrom(source, &spBPQueuePeek);
 }
 
 double spBPQueueMaxValue(SPBPQueue source)
 {
-	if (source == NULL)
-		return -1;
-	return spListElementGetValue(spBPQueuePeekLast(source));
+	return returnValueFrom(source, &spBPQueuePeekLast);
 }
 
 bool spBPQueueIsEmpty(SPBPQueue source)
