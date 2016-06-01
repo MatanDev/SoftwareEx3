@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SP_BPQUEUE_MSG message;
@@ -256,6 +257,7 @@ static bool testSorted(){
 		while (!spBPQueueIsEmpty(queue)){
 			spListElementDestroy(prevElement);
 			prevElement = spListElementCopy(currentElement);
+			spListElementDestroy(currentElement);
 			currentElement = spBPQueuePeek(queue);
 			message	= spBPQueueDequeue(queue);
 			ASSERT_TRUE(prevElement != NULL);
@@ -303,6 +305,7 @@ static bool testCase1()
 }
 
 int main() {
+	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
 	RUN_TEST(testBPQueueCopy);
 	RUN_TEST(testBPQueueSize);
