@@ -83,6 +83,8 @@ void spBPQueueDestroy(SPBPQueue source)
 	if (source != NULL) {
 		if (source->queue != NULL)
 			spListDestroy(source->queue);
+		spListElementDestroy(source->maxElement);
+		source->maxElement = NULL;
 		free(source);
 		source = NULL;
 	}
@@ -94,7 +96,7 @@ void spBPQueueClear(SPBPQueue source)
 	{
 		spListClear(source->queue);
 		if (!source->maxElement){
-			free(source->maxElement);
+			spListElementDestroy(source->maxElement);
 			source->maxElement = NULL;
 		}
 	}

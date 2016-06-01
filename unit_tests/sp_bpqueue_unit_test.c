@@ -260,15 +260,15 @@ static bool testCase1()
 	SPListElement e9 = spListElementCreate(263 , 17.658010);
 	SPBPQueue queue = quickQueue(17, 9, e1,e2,e3,e4,e5,e6,e7,e8,e9);
 	spBPQueueDestroy(queue);
-	spListElementDestroy(e1);
-	spListElementDestroy(e2);
-	spListElementDestroy(e3);
-	spListElementDestroy(e4);
-	spListElementDestroy(e5);
-	spListElementDestroy(e6);
-	spListElementDestroy(e7);
-	spListElementDestroy(e8);
-	spListElementDestroy(e9);
+	spListElementDestroy(e1); e1 = NULL;
+	spListElementDestroy(e2); e2 = NULL;
+	spListElementDestroy(e3); e3 = NULL;
+	spListElementDestroy(e4); e4 = NULL;
+	spListElementDestroy(e5); e5 = NULL;
+	spListElementDestroy(e6); e6 = NULL;
+	spListElementDestroy(e7); e7 = NULL;
+	spListElementDestroy(e8); e8 = NULL;
+	spListElementDestroy(e9); e9 = NULL;
 	return true;
 
 }
