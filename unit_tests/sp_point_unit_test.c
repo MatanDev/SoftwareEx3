@@ -210,7 +210,7 @@ bool pointDestroyInvalidArgumentsTest()
 	spPointDestroy(NULL);
 	return true;
 }
-
+/*
 int main() {
 	RUN_TEST(pointBasicCopyTest);
 	RUN_TEST(pointBasicL2Distance);
@@ -226,3 +226,4 @@ int main() {
 
 	return 0;
 }
+*/

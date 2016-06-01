@@ -153,7 +153,7 @@ static bool basicLoggerStdoutTest() {
 	spLoggerDestroy();
 	return true;
 }
-
+/*
 int main() {
 	RUN_TEST(basicLoggerTest);
 	RUN_TEST(basicLoggerErrorTest);
@@ -166,3 +166,4 @@ int main() {
 	//RUN_TEST(basicLoggerStdoutTest);
 	return 0;
 }
+*/
