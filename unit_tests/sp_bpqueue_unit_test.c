@@ -2,10 +2,52 @@
 #include "../SPBPriorityQueue.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include "../SPLogger.h" //TODO - remove at production
 #include <stdlib.h>
 #include <time.h>
 
 static SPBPQueue quickRandomQueue(int capacity, int size) {
+	SP_BPQUEUE_MSG message;
+	int i, index;
+	double val;
+	SPListElement elem, temp;
+	SPBPQueue queue = spBPQueueCreate(capacity);
+	spLoggerCreate("queuelogger.txt", SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL);
+	char buf[1024];
+	spLoggerPrintMsg("Q\n");
+	for (i = 0; i < size; i++) {
+		val = (double)rand()/((double)RAND_MAX/100);
+		index = (int)(rand() % 300);
+		//printf("index : %d | val : %f \n",index,val);
+
+		//fflush(NULL);
+		elem = spListElementCreate(index, val);
+		ASSERT_TRUE(elem != NULL);
+		sprintf(buf, "random size: %d, queue size: %d, queue capacity: %d\n",
+						size, spBPQueueSize(queue), spBPQueueGetMaxSize(queue));
+		spLoggerPrintMsg(buf);
+		sprintf(buf, "index : %d | val : %f \n",spListElementGetIndex(elem),
+								spListElementGetValue(elem));
+		spLoggerPrintMsg(buf);
+		message = spBPQueueEnqueue(queue, elem);
+		//printf("{%d | %f}",index,val);
+		ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS || message == SP_BPQUEUE_FULL);
+		spListElementDestroy(elem);
+		if (capacity > 0){
+			temp = spBPQueuePeekLast(queue);
+			ASSERT_TRUE(temp != NULL);
+			spListElementDestroy(temp);
+			temp = spBPQueuePeek(queue);
+			ASSERT_TRUE(temp != NULL);
+			spListElementDestroy(temp);
+		}
+	}
+	spLoggerPrintMsg("END\n\n");
+	ASSERT_TRUE(queue!=NULL);
+	return queue;
+}
+
+static SPBPQueue quickRandomQueueOld(int capacity, int size) {
 	SP_BPQUEUE_MSG message;
 	int i, index;
 	double val;
@@ -304,6 +346,27 @@ static bool testCase1()
 
 }
 
+void interactive_test(){
+	SPBPQueue queue = spBPQueueCreate(6);
+	SPListElement e1;
+	double x = 1;
+	int index = 1;
+	PrintQueue(queue);
+	while (x >= 0){
+		printf("Get num : "); fflush(NULL);
+		scanf("%lf", &x);
+		if (x >= 0) {
+			e1 = spListElementCreate(index , x);
+			spBPQueueEnqueue(queue,e1);
+			spListElementDestroy(e1);
+			e1 = NULL;
+			PrintQueue(queue);
+		}
+	}
+	spBPQueueDestroy(queue);
+
+}
+
 int main() {
 	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
@@ -315,6 +378,7 @@ int main() {
 	RUN_TEST(testBPQueueClear);
 	RUN_TEST(testBPQueueDestroy);
 	RUN_TEST(testCase1);
-	RUN_TEST(testSorted);
+	//RUN_TEST(testSorted);
+	interactive_test();
 	return 0;
 }
