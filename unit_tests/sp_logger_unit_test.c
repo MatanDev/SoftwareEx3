@@ -138,7 +138,7 @@ static bool basicLoggerPrintMsgTest() {
 	ASSERT_TRUE(identicalFiles(testFile,expectedFile));
 	return true;
 }
-
+/*
 static bool basicLoggerStdoutTest() {
 	ASSERT_TRUE(spLoggerCreate(NULL,SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
 	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg1") == SP_LOGGER_SUCCESS);
@@ -152,7 +152,7 @@ static bool basicLoggerStdoutTest() {
 	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg5") == SP_LOGGER_SUCCESS);
 	spLoggerDestroy();
 	return true;
-}
+}*/
 /*
 int main() {
 	RUN_TEST(basicLoggerTest);
@@ -166,4 +166,5 @@ int main() {
 	//RUN_TEST(basicLoggerStdoutTest);
 	return 0;
 }
+
 */

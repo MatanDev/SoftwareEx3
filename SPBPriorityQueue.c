@@ -307,20 +307,16 @@ SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element)
 	if (source == NULL || source->queue == NULL || element == NULL)
 		return SP_BPQUEUE_INVALID_ARGUMENT;
 
+	//TODO - if we keep it this way and not full (check with the forum) than we should change the method documentation accordingly
 	if (spBPQueueGetMaxSize(source) == 0)
-		return SP_BPQUEUE_FULL; //TODO - maybe this should be success
+		return SP_BPQUEUE_SUCCESS;
 
-	assert(element != NULL); //TODO - remove at production
-	assert(source != NULL); //TODO - remove at production
-	assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
 
 	// the list is full and the element is greater than all the current items
 	//TODO - if we need < than we need to change the logic of the next lines
 	if (spBPQueueIsFull(source) && spListElementCompare(element, source->maxElement) >= 0){
-		return SP_BPQUEUE_FULL; //TODO - track the forum to verify if we need to return success
-		assert(element != NULL); //TODO - remove at production
-		assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
-
+		//TODO - if we keep it this way and not full (check with the forum) than we should change the method documentation accordingly
+		return SP_BPQUEUE_SUCCESS;
 	}
 
 	if (spBPQueueIsEmpty(source))
