@@ -132,7 +132,11 @@ SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement
 	if (retVal == SP_LIST_OUT_OF_MEMORY)
 		return SP_BPQUEUE_OUT_OF_MEMORY;
 
-	source->maxElement = newElement;
+	source->maxElement = spListElementCopy(newElement);
+
+	if (source->maxElement == NULL)
+		return SP_BPQUEUE_OUT_OF_MEMORY;
+
 	return SP_BPQUEUE_SUCCESS;
 }
 
@@ -145,152 +149,40 @@ SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement
  *  source != NULL, list is at full capacity and currElemInQueue != NULL
  *  @param source - the given queue from which we should remove the last item
  *  @param currElemInQueue - a pointer to the current iterator of the internal list in the queue
+ *   *  @return
+ *  SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
+ *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
-void spBPQueueHandleFullCapacity(SPBPQueue source, SPListElement currElemInQueue) {
-	SPListElement prevElemInQueue;
-	SP_LIST_MSG listMessage;
-	assert(currElemInQueue != NULL); //TODO - remove at production
-	assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
-
-	//assert(spBPQueueSize(source) -1 <= spBPQueueGetMaxSize(source));
+SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
+	int i;
+	bool updateMax = false;
+	SPListElement currElemInQueue, prevElemInQueue;
 	currElemInQueue = spListGetFirst(source->queue);
+	prevElemInQueue = currElemInQueue;
 
-	while (currElemInQueue!= NULL && spListElementCompare(currElemInQueue, source->maxElement) != 0)
+	for (i=1;i<spBPQueueSize(source);i++)
 	{
 		prevElemInQueue = currElemInQueue;
 		currElemInQueue = spListGetNext(source->queue);
-		assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
 	}
 
-	//TODO - decide what to do with invalid current regarding spListRemoveCurrent
-
-	listMessage = spListRemoveCurrent(source->queue);
-	assert(listMessage == SP_LIST_SUCCESS);
-	if (spBPQueueSize(source) -1 >= spBPQueueGetMaxSize(source)) //TODO - remove at production
-	{
-		printf("problem : size %d | max_size : %d \n",
-				spBPQueueSize(source), spBPQueueGetMaxSize(source));
-		printf("prev : { %d : %f } -------  maxElement : { %d : %f }\n",
-				spListElementGetIndex(prevElemInQueue),
-				spListElementGetValue(prevElemInQueue),
-				spListElementGetIndex(source->maxElement),
-				spListElementGetValue(source->maxElement)
-				);
-
+	if (spListElementCompare(currElemInQueue, source->maxElement) >= 0){
+		updateMax = true;
 	}
-
-	spListElementDestroy(source->maxElement);
-	assert(prevElemInQueue!= NULL); //TODO - remove at production
-	source->maxElement = spListElementCopy(prevElemInQueue);
-
-
-}
-
-void spBPQueueHandleFullCapacity2(SPBPQueue source, SPListElement currElemInQueue) {
-	int i;
-	SPListElement temp;
-	currElemInQueue = spListGetFirst(source->queue);
-
-	for (i=1;i<spBPQueueSize(source) - 1;i++)
-	{
-		currElemInQueue = spListGetNext(source->queue);
-	}
-	spListGetNext(source->queue);
-	assert(currElemInQueue!= NULL);
-	temp = spListGetCurrent(source->queue);
-
-	assert(temp != NULL);
 
 	spListRemoveCurrent(source->queue);
-	currElemInQueue = spListGetFirst(source->queue);
 
-	assert(currElemInQueue!= NULL);
-	spListElementDestroy(source->maxElement);
-	source->maxElement = spListElementCopy(currElemInQueue);
+	if (updateMax){
+		spListElementDestroy(source->maxElement);
+		source->maxElement = spListElementCopy(prevElemInQueue);
+		if (source->maxElement == NULL)
+			return SP_BPQUEUE_OUT_OF_MEMORY;
+	}
 
+	return SP_BPQUEUE_SUCCESS;
 
 }
 
-void spBPQueueHandleFullCapacity3(SPBPQueue source, SPListElement currElemInQueue) {
-	SPListElement prevElemInQueue;
-	//int i;
-	SP_LIST_MSG listMessage;
-	assert(currElemInQueue != NULL); //TODO - remove at production
-	assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
-
-	//assert(spBPQueueSize(source) -1 <= spBPQueueGetMaxSize(source));
-	/*currElemInQueue = spListGetFirst(source->queue);
-	assert(currElemInQueue!=NULL);
-	prevElemInQueue = currElemInQueue;
-	for (i=1;i<spBPQueueSize(source) - 1;i++)
-	{
-		prevElemInQueue = currElemInQueue;
-		currElemInQueue = spListGetNext(source->queue);
-		assert(currElemInQueue!=NULL);
-	}*/
-	 while (//currElemInQueue!= NULL &&
-
-	  spListElementCompare(currElemInQueue, source->maxElement) < 0)
-	{
-		printf("1] prev : { %d : %f } -------  maxElement : { %d : %f }\n",
-				spListElementGetIndex(prevElemInQueue),
-				spListElementGetValue(prevElemInQueue),
-				spListElementGetIndex(source->maxElement),
-				spListElementGetValue(source->maxElement)
-				);
-		prevElemInQueue = currElemInQueue;
-		currElemInQueue = spListGetNext(source->queue);
-		assert(currElemInQueue != NULL);
-		if (currElemInQueue == NULL)
-		{
-			printf("sahbak] prev : { %d : %f } -------  maxElement : { %d : %f }\n",
-							spListElementGetIndex(prevElemInQueue),
-							spListElementGetValue(prevElemInQueue),
-							spListElementGetIndex(source->maxElement),
-							spListElementGetValue(source->maxElement)
-							);
-		}
-		assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
-		printf("2] prev : { %d : %f } -------  maxElement : { %d : %f }\n",
-				spListElementGetIndex(prevElemInQueue),
-				spListElementGetValue(prevElemInQueue),
-				spListElementGetIndex(source->maxElement),
-				spListElementGetValue(source->maxElement)
-				);
-	}
-
-	/*printf("1] prev : { %d : %f } -------  maxElement : { %d : %f }\n",
-					spListElementGetIndex(prevElemInQueue),
-					spListElementGetValue(prevElemInQueue),
-					spListElementGetIndex(source->maxElement),
-					spListElementGetValue(source->maxElement)
-					);
-*/
-	//TODO - decide what to do with invalid current regarding spListRemoveCurrent
-	assert(currElemInQueue!=NULL);
-	assert(source->queue);
-	listMessage = spListRemoveCurrent(source->queue);
-	printf("%d\n", listMessage);
-	assert(listMessage == SP_LIST_SUCCESS);
-	if (spBPQueueSize(source) -1 >= spBPQueueGetMaxSize(source)) //TODO - remove at production
-	{
-		printf("problem : size %d | max_size : %d \n",
-				spBPQueueSize(source), spBPQueueGetMaxSize(source));
-		printf("prev : { %d : %f } -------  maxElement : { %d : %f }\n",
-				spListElementGetIndex(prevElemInQueue),
-				spListElementGetValue(prevElemInQueue),
-				spListElementGetIndex(source->maxElement),
-				spListElementGetValue(source->maxElement)
-				);
-
-	}
-
-	spListElementDestroy(source->maxElement);
-	assert(prevElemInQueue!= NULL); //TODO - remove at production
-	source->maxElement = spListElementCopy(prevElemInQueue);
-
-
-}
 
 
 /*
@@ -306,7 +198,7 @@ void spBPQueueHandleFullCapacity3(SPBPQueue source, SPListElement currElemInQueu
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
 SP_BPQUEUE_MSG spBPQueueInsertNotEmptyNotLast(SPBPQueue source,
-		SPListElement element, SPListElement currElemInQueue) {
+		SPListElement element) {
 	SP_LIST_MSG retVal;
 	retVal = spListInsertBeforeCurrent(source->queue, element);
 
@@ -319,7 +211,7 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyNotLast(SPBPQueue source,
 	// two: change the ordering to check this first and then insert
 	//if (spBPQueueIsFull(source)) // we are at full capacity
 	if (spBPQueueSize(source) > spBPQueueGetMaxSize(source))
-		spBPQueueHandleFullCapacity(source, currElemInQueue);
+		return spBPQueueHandleFullCapacity(source);
 
 	return SP_BPQUEUE_SUCCESS;
 }
@@ -344,7 +236,11 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement el
 	if (retVal == SP_LIST_OUT_OF_MEMORY)
 		return SP_BPQUEUE_OUT_OF_MEMORY;
 
-	source->maxElement = element;
+	spListElementDestroy(source->maxElement);
+	source->maxElement = spListElementCopy(element);
+
+	if (source->maxElement == NULL)
+		return SP_BPQUEUE_OUT_OF_MEMORY;
 
 	return SP_BPQUEUE_SUCCESS;
 }
@@ -352,26 +248,25 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement el
 void PrintQueue(SPBPQueue source){
 	SPListElement iterator;
 	if (source == NULL){
-		printf("Source is null\n");
+		puts("Source is null\n");
 		fflush(NULL);
 		return;
 	}
 	if (source->queue == NULL){
-			printf("Queue is null\n");
+		puts("Queue is null\n");
 			fflush(NULL);
 			return;
 	}
-	printf (" Queue : ");
+	puts(" Queue : ");
 	fflush(NULL);
 	for(iterator = spListGetFirst(source->queue) ; iterator ; iterator = spListGetNext(source->queue))
     {
 	   printf("%f , ", spListElementGetValue(iterator));
 	   fflush(NULL);
-	   spListElementDestroy(iterator);
 	 }
-	spListElementDestroy(iterator);
 	printf(" [max = %f]",spListElementGetValue(source->maxElement));
-    printf("\n");
+	iterator = NULL;
+	puts("\n");
     fflush(NULL);
 }
 
@@ -398,7 +293,10 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElemen
 	}
 
 	if (currElemInQueue != NULL) // currElemInQueue > newElement
-		return spBPQueueInsertNotEmptyNotLast(source, newElement, currElemInQueue);
+	{
+		currElemInQueue = NULL;
+		return spBPQueueInsertNotEmptyNotLast(source, newElement);
+	}
 
 	// we are not at full capacity because we took care of it before
 	return spBPQueueInsertNotEmptyButLast(source, newElement);
@@ -417,7 +315,8 @@ SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element)
 	assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production
 
 	// the list is full and the element is greater than all the current items
-	if (spBPQueueIsFull(source) && spListElementCompare(element, source->maxElement) > 0){
+	//TODO - if we need < than we need to change the logic of the next lines
+	if (spBPQueueIsFull(source) && spListElementCompare(element, source->maxElement) >= 0){
 		return SP_BPQUEUE_FULL; //TODO - track the forum to verify if we need to return success
 		assert(element != NULL); //TODO - remove at production
 		assert(spBPQueueSize(source) == 0 || source->maxElement != NULL); //TODO - remove at production

@@ -41,6 +41,7 @@ void spListElementDestroy(SPListElement data) {
 		return;
 	}
 	free(data);
+	data = NULL; //TODO - remove this, and verify we always do this when using element destroy
 }
 
 SP_ELEMENT_MSG spListElementSetIndex(SPListElement data, int index) {

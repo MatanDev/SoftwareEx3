@@ -5,7 +5,7 @@
 #include "../SPLogger.h" //TODO - remove at production
 #include <stdlib.h>
 #include <time.h>
-
+/*
 static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SP_BPQUEUE_MSG message;
 	int i, index;
@@ -46,14 +46,15 @@ static SPBPQueue quickRandomQueue(int capacity, int size) {
 	ASSERT_TRUE(queue!=NULL);
 	return queue;
 }
+*/
 
-static SPBPQueue quickRandomQueueOld(int capacity, int size) {
+static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SP_BPQUEUE_MSG message;
 	int i, index;
 	double val;
 	SPListElement elem, temp;
 	SPBPQueue queue = spBPQueueCreate(capacity);
-	printf("Q : {");
+//	printf("Q : {");
 	for (i = 0; i < size; i++) {
 		val = (double)rand()/((double)RAND_MAX/100);
 		index = (int)(rand() % 300);
@@ -63,19 +64,22 @@ static SPBPQueue quickRandomQueueOld(int capacity, int size) {
 		elem = spListElementCreate(index, val);
 		ASSERT_TRUE(elem != NULL);
 		message = spBPQueueEnqueue(queue, elem);
-		printf("{%d | %f}",index,val);
+	//	printf("{%d | %f}",index,val);
 		ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS || message == SP_BPQUEUE_FULL);
 		spListElementDestroy(elem);
+		elem = NULL;
 		if (capacity > 0){
 			temp = spBPQueuePeekLast(queue);
 			ASSERT_TRUE(temp != NULL);
 			spListElementDestroy(temp);
+			temp = NULL;
 			temp = spBPQueuePeek(queue);
 			ASSERT_TRUE(temp != NULL);
 			spListElementDestroy(temp);
+			temp = NULL;
 		}
 	}
-	printf(" \nEND\n");
+	//printf(" \nEND\n");
 	ASSERT_TRUE(queue!=NULL);
 	return queue;
 }
@@ -273,23 +277,22 @@ static bool testBPQueueDestroy() {
 }
 
 static bool testSorted(){
-	SPListElement prevElement, currentElement;
+	SPListElement prevElement = NULL, currentElement = NULL;
 	SP_BPQUEUE_MSG message;
-	int size,max_size, counter,i, numOfTests = 3000;
+	int size,max_size, counter,i, numOfTests = 200;
 	SPBPQueue queue = NULL;
 	for (i = 0 ; i< numOfTests ; i++)
 	{
-		printf("Test #%d\n",i);
-		size = (int)(rand() % 20);
-		max_size = (int)(rand() % 20);
-		printf("size: %d | max_size: %d \n",size,max_size);
+		//printf("Test #%d\n",i);
+		size = (int)(rand() % 500);
+		max_size = (int)(rand() % 500);
+		//printf("size: %d | max_size: %d \n",size,max_size);
 		counter = 0;
 		ASSERT_TRUE(queue == NULL);
 		queue = quickRandomQueue(max_size, size);
 		ASSERT_TRUE(queue != NULL);
-		printf("counter : %d | size: %d | max_size: %d | getSize : %d | getMaxSize : %d \n",
-					counter,size,max_size,spBPQueueSize(queue), spBPQueueGetMaxSize(queue));
-		ASSERT_TRUE(queue != NULL);
+		//printf("counter : %d | size: %d | max_size: %d | getSize : %d | getMaxSize : %d \n",
+		//			counter,size,max_size,spBPQueueSize(queue), spBPQueueGetMaxSize(queue));
 		if (!spBPQueueIsEmpty(queue)){
 			currentElement = spBPQueuePeek(queue);
 			message	= spBPQueueDequeue(queue);
@@ -298,8 +301,10 @@ static bool testSorted(){
 		}
 		while (!spBPQueueIsEmpty(queue)){
 			spListElementDestroy(prevElement);
+			prevElement = NULL;
 			prevElement = spListElementCopy(currentElement);
 			spListElementDestroy(currentElement);
+			currentElement = NULL;
 			currentElement = spBPQueuePeek(queue);
 			message	= spBPQueueDequeue(queue);
 			ASSERT_TRUE(prevElement != NULL);
@@ -308,12 +313,15 @@ static bool testSorted(){
 			ASSERT_TRUE(spListElementCompare(prevElement,currentElement)<=0);
 			counter++;
 		}
-		printf("counter : %d | size: %d | max_size: %d | getSize : %d | getMaxSize : %d \n",
-				counter,size,max_size,spBPQueueSize(queue), spBPQueueGetMaxSize(queue));
+		//printf("counter : %d | size: %d | max_size: %d | getSize : %d | getMaxSize : %d \n",
+		//		counter,size,max_size,spBPQueueSize(queue), spBPQueueGetMaxSize(queue));
 		ASSERT_TRUE(counter == (size < max_size ? size : max_size) );
 		ASSERT_TRUE(spBPQueueIsEmpty(queue));
+
 		spListElementDestroy(currentElement);
+		currentElement = NULL;
 		spListElementDestroy(prevElement);
+		prevElement = NULL;
 		spBPQueueDestroy(queue);
 		queue = NULL;
 	}
@@ -345,16 +353,17 @@ static bool testCase1()
 	return true;
 
 }
-
+/*
 void interactive_test(){
+	//setbuf(stdout, NULL);
 	SPBPQueue queue = spBPQueueCreate(6);
 	SPListElement e1;
 	double x = 1;
 	int index = 1;
 	PrintQueue(queue);
 	while (x >= 0){
-		printf("Get num : "); fflush(NULL);
-		scanf("%lf", &x);
+		puts("Get num : "); fflush(NULL);
+		scanf("%lf", &x); fflush(NULL);
 		if (x >= 0) {
 			e1 = spListElementCreate(index , x);
 			spBPQueueEnqueue(queue,e1);
@@ -364,8 +373,7 @@ void interactive_test(){
 		}
 	}
 	spBPQueueDestroy(queue);
-
-}
+}*/
 
 int main() {
 	srand(time(NULL));
@@ -378,7 +386,7 @@ int main() {
 	RUN_TEST(testBPQueueClear);
 	RUN_TEST(testBPQueueDestroy);
 	RUN_TEST(testCase1);
-	//RUN_TEST(testSorted);
-	interactive_test();
+	RUN_TEST(testSorted);
+	//interactive_test();
 	return 0;
 }
