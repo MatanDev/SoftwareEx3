@@ -65,10 +65,9 @@ SPPoint spPointCreate(double* data, int dim, int index){
 
 SPPoint spPointCopy(SPPoint source){
 	assert (source != NULL);
-	double* dataCopy = copyData(source->data, source->dim);
-	if (!dataCopy)
+	if (!source->data)
 		return NULL;
-	return spPointCreate(dataCopy,source->dim,source->index);
+	return spPointCreate(source->data,source->dim,source->index);
 }
 
 void spPointDestroy(SPPoint point)

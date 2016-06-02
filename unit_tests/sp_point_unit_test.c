@@ -3,9 +3,26 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
+#define epsilon_hard 2.25e-308
 #define epsilon 0.00001
+
+//calcs a squere root (at epsilon_hard error)
+double sqroot(double x)
+{
+    double rslt=x/3, prev, diff=1;
+    if (x <= 0) return 0;
+
+    do
+    {
+    	prev = rslt;
+        rslt = (rslt + x / rslt) / 2;
+        diff = rslt - prev;
+    }
+    while (diff > epsilon_hard || diff < -epsilon_hard);
+
+    return rslt;
+}
 
 //Checks if copy Works
 bool pointBasicCopyTest() {
@@ -190,9 +207,9 @@ bool pointTestTriangleInequality()
 		p2 = getRandomPoint(dim);
 		p3 = getRandomPoint(dim);
 
-		p1p2 = sqrt(spPointL2SquaredDistance(p1,p2));
-		p1p3 = sqrt(spPointL2SquaredDistance(p1,p3));
-		p3p2 = sqrt(spPointL2SquaredDistance(p3,p2));
+		p1p2 = sqroot(spPointL2SquaredDistance(p1,p2));
+		p1p3 = sqroot(spPointL2SquaredDistance(p1,p3));
+		p3p2 = sqroot(spPointL2SquaredDistance(p3,p2));
 
 		ASSERT_TRUE(p1p2 <= p1p3 + p3p2 + epsilon);
 		ASSERT_TRUE(p1p3 <= p1p2 + p3p2 + epsilon);
@@ -210,7 +227,7 @@ bool pointDestroyInvalidArgumentsTest()
 	spPointDestroy(NULL);
 	return true;
 }
-/*
+
 int main() {
 	RUN_TEST(pointBasicCopyTest);
 	RUN_TEST(pointBasicL2Distance);
@@ -226,4 +243,3 @@ int main() {
 
 	return 0;
 }
-*/

@@ -374,7 +374,7 @@ void interactive_test(){
 	}
 	spBPQueueDestroy(queue);
 }*/
-
+/*
 int main() {
 	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
@@ -390,3 +390,4 @@ int main() {
 	//interactive_test();
 	return 0;
 }
+*/
