@@ -228,7 +228,7 @@ bool pointDestroyInvalidArgumentsTest()
 	return true;
 }
 
-int main() {
+/*int main() {
 	RUN_TEST(pointBasicCopyTest);
 	RUN_TEST(pointBasicL2Distance);
 
@@ -242,4 +242,4 @@ int main() {
 	RUN_TEST(pointTestDistanceNotNegative);
 
 	return 0;
-}
+}*/

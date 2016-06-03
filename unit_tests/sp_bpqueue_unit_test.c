@@ -96,6 +96,13 @@ static SPBPQueue quickQueue(int capacity, int size, ...) {
 	return queue;
 }
 
+static void quickDequeue(SPBPQueue queue, int size) {
+	int i;
+	for (i = 0; i < size; i++) {
+		spBPQueueDequeue(queue);
+	}
+}
+
 static bool testBPQueueCreate() {
 	SPBPQueue queue = spBPQueueCreate(7);
 	ASSERT_TRUE(queue != NULL);
@@ -250,6 +257,60 @@ static bool testBPQueueMinMaxValue() {
 	return true;
 }
 
+static bool testBPQueueIsEmptyFull() {
+	SPBPQueue queue = spBPQueueCreate(0);
+	ASSERT_TRUE(spBPQueueIsEmpty(queue));
+	ASSERT_TRUE(spBPQueueIsFull(queue));
+	SPListElement e1 = spListElementCreate(1, 1.0);
+	SPListElement e2 = spListElementCreate(2, 2.0);
+	SPListElement e3 = spListElementCreate(3, 3.0);
+	SPListElement e4 = spListElementCreate(4, 4.0);
+	SPListElement e5 = spListElementCreate(5, 5.0);
+	SPBPQueue queue2 = quickQueue(5, 4, e2, e3, e1, e4);
+	ASSERT_TRUE(!spBPQueueIsFull(queue2));
+	ASSERT_TRUE(!spBPQueueIsEmpty(queue2));
+	spBPQueueEnqueue(queue2, e5);
+	ASSERT_TRUE(spBPQueueIsFull(queue2));
+	ASSERT_TRUE(!spBPQueueIsEmpty(queue2));
+	quickDequeue(queue2, 4);
+	ASSERT_TRUE(!spBPQueueIsEmpty(queue2));
+	ASSERT_TRUE(!spBPQueueIsFull(queue2));
+	spBPQueueDequeue(queue2);
+	ASSERT_TRUE(spBPQueueIsEmpty(queue2));
+	ASSERT_TRUE(!spBPQueueIsFull(queue2));
+	spBPQueueDestroy(queue);
+	spBPQueueDestroy(queue2);
+	spListElementDestroy(e1);
+	spListElementDestroy(e2);
+	spListElementDestroy(e3);
+	spListElementDestroy(e4);
+	spListElementDestroy(e5);
+	return true;
+}
+
+static bool testBPQueueEnqueue() {
+	SPListElement e1 = spListElementCreate(1, 1.0);
+	SPListElement e2 = spListElementCreate(2, 2.0);
+	SPListElement e3 = spListElementCreate(3, 3.0);
+	SPListElement e4 = spListElementCreate(4, 4.0);
+	SPListElement e5 = spListElementCreate(5, 5.0);
+	SPBPQueue queue = quickQueue(4, 4, e1, e2, e4, e5);
+	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e5) == 0);
+	spBPQueueEnqueue(queue, e3);
+	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e4) == 0);
+	spBPQueueEnqueue(queue, e1);
+	spBPQueueEnqueue(queue, e1);
+	spBPQueueEnqueue(queue, e1);
+	spBPQueueEnqueue(queue, e1);
+	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e1) == 0);
+	spListElementDestroy(e1);
+	spListElementDestroy(e2);
+	spListElementDestroy(e3);
+	spListElementDestroy(e4);
+	spListElementDestroy(e5);
+	return true;
+}
+
 static bool testBPQueueClear() {
 	SPListElement e1 = spListElementCreate(1, 1.0);
 	SPListElement e2 = spListElementCreate(2, 2.0);
@@ -259,6 +320,8 @@ static bool testBPQueueClear() {
 	spBPQueueClear(queue);
 	ASSERT_TRUE(0 == spBPQueueSize(queue));
 	ASSERT_TRUE(7 == spBPQueueGetMaxSize(queue));
+	ASSERT_TRUE(spBPQueuePeek(queue) == NULL);
+	ASSERT_TRUE(spBPQueuePeekLast(queue) == NULL); // validate that maxElement is null
 	SPBPQueue queue2 = spBPQueueCreate(19);
 	spBPQueueClear(queue2);
 	ASSERT_TRUE(0 == spBPQueueSize(queue2));
@@ -374,7 +437,7 @@ void interactive_test(){
 	}
 	spBPQueueDestroy(queue);
 }*/
-/*
+
 int main() {
 	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
@@ -387,7 +450,9 @@ int main() {
 	RUN_TEST(testBPQueueDestroy);
 	RUN_TEST(testCase1);
 	RUN_TEST(testSorted);
+	RUN_TEST(testBPQueueIsEmptyFull);
+	RUN_TEST(testBPQueueEnqueue);
 	//interactive_test();
 	return 0;
 }
-*/
+
