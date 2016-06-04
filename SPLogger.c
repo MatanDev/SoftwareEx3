@@ -71,7 +71,7 @@ void spLoggerDestroy() {
  * SP_LOGGER_WRITE_FAIL			- If Write failure occurred
  * SP_LOGGER_SUCCESS			- otherwise
  */
-SP_LOGGER_MSG spLoggerPrintFormmatedString(const char* msg, ...){ //TODO - Verify this works
+SP_LOGGER_MSG spLoggerPrintFormmatedString(const char* msg, ...){
 	if (!logger)
 		return SP_LOGGER_UNDIFINED;
 	if (!msg)
