@@ -70,6 +70,7 @@ static void quickDequeue(SPBPQueue queue, int size) {
 static bool testBPQueueCreate() {
 	SPBPQueue queue = NULL, queue2 = NULL;
 
+	//check for invalid arguments
 	queue = spBPQueueCreate(DEFAULT_INVALID_NUMBER);
 	ASSERT_TRUE(queue == NULL);
 
@@ -96,7 +97,8 @@ static bool testBPQueueCopy() {
 
 	copy = spBPQueueCopy(queue);
 
-	ASSERT_TRUE(spBPQueueCopy(NULL) == NULL); // test source is NULL
+	// test invalid arguments
+	ASSERT_TRUE(spBPQueueCopy(NULL) == NULL);
 
 	ASSERT_TRUE(copy != NULL);
 	ASSERT_TRUE(0 == spBPQueueSize(copy));
@@ -165,6 +167,9 @@ static bool testBPQueueSize() {
 	spBPQueueDequeue(queue);
 	ASSERT_TRUE(1 == spBPQueueSize(queue));
 
+	//test invalid argument
+	ASSERT_TRUE(spBPQueueSize(NULL) ==  DEFAULT_INVALID_NUMBER);
+
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
 	return true;
@@ -184,6 +189,9 @@ static bool testBPQueueMaxSize() {
 	ASSERT_TRUE(4 == spBPQueueSize(queue));
 	ASSERT_TRUE(5 == spBPQueueGetMaxSize(queue));
 	ASSERT_TRUE(spBPQueueSize(queue) < spBPQueueGetMaxSize(queue));
+
+	//test invalid argument
+	ASSERT_TRUE(spBPQueueGetMaxSize(NULL) ==  DEFAULT_INVALID_NUMBER);
 
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
@@ -252,6 +260,11 @@ static bool testBPQueuePeekFirstandLast() {
 	temp = spBPQueuePeekLast(queue2);
 	ASSERT_TRUE(spListElementCompare(last, temp) == 0);
 
+	//test invalid arguments - peek
+	ASSERT_TRUE(spBPQueuePeek(NULL) == NULL);
+	//test invalid arguments - peek last
+	ASSERT_TRUE(spBPQueuePeekLast(NULL) == NULL);
+
 	spListElementDestroy(last);
 	spListElementDestroy(temp);
 	spBPQueueDestroy(queue);
@@ -282,6 +295,11 @@ static bool testBPQueueMinMaxValue() {
 
 	ASSERT_TRUE(spBPQueueMinValue(queue2) == 1);
 	ASSERT_TRUE(spBPQueueMaxValue(queue2) == 4);
+
+
+	//test invalid arguments
+	ASSERT_TRUE(spBPQueueMinValue(NULL) == DEFAULT_INVALID_NUMBER);
+	ASSERT_TRUE(spBPQueueMaxValue(NULL) == DEFAULT_INVALID_NUMBER);
 
 	spBPQueueDestroy(queue);
 	spBPQueueDestroy(queue2);
@@ -454,7 +472,6 @@ static bool testBPQueueDequeue() {
 	return true;
 }
 
-
 //Test for the 'clear' method
 static bool testBPQueueClear() {
 	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL;
@@ -479,6 +496,9 @@ static bool testBPQueueClear() {
 	spBPQueueClear(queue2);
 	ASSERT_TRUE(0 == spBPQueueSize(queue2));
 
+	//verify invalid argument not crashing
+	spBPQueueClear(NULL);
+
 	spBPQueueDestroy(queue);
 	spBPQueueDestroy(queue2);
 	spListElementDestroy(e1);
@@ -493,7 +513,6 @@ static bool testBPQueueDestroy() {
 	spBPQueueDestroy(NULL);
 	return true;
 }
-
 
 //Test for the queue ordered invariant, also tests the enqueue and dequeue
 static bool testSorted(){
