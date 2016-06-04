@@ -308,7 +308,7 @@ SP_BPQUEUE_MSG spBPQueueDequeue(SPBPQueue source) {
 		return SP_BPQUEUE_EMPTY;
 
 	first = spListGetFirst(source->queue);
-	if (!first)
+	if (first == NULL)
 		return SP_BPQUEUE_EMPTY;
 
 	// if we have 1 items -> last is first -> we should free its pointer

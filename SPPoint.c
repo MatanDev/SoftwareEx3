@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-//TODO - choose a convention regarding null comparison
-
 /*
  * A structure used for the point data type
  * data - an array of the axis data of the point
@@ -24,34 +22,33 @@ struct sp_point_t {
  * @returns
  * NULL if data is NULL or size < 0, otherwise a hard copy of the given array
  */
-double* copyData(double* data, int size)
-{
+double* copyData(double* data, int size) {
 	int i;
 	double* newData;
 
 	if (data == NULL || size < 0)
 		return NULL;
 
-	newData = (double*)calloc(size,sizeof(double));
+	newData = (double*)calloc(size, sizeof(double));
 
-	if (!newData)
+	if (newData == NULL)
 		return NULL;
 
-	for (i=0;i<size;i++)
+	for (i = 0; i < size; i++)
 		newData[i] = data[i];
 
 	return newData;
 }
 
-SPPoint spPointCreate(double* data, int dim, int index){
-	if (!data) //data is null
+SPPoint spPointCreate(double* data, int dim, int index) {
+	if (data == NULL) //data is null
 		return NULL;
 	if (dim <= 0) //dimension illegal
 		return NULL;
-	if (index <0) //index illegal
+	if (index < 0) //index illegal
 		return NULL;
 	SPPoint item = (SPPoint)calloc(1,sizeof(struct sp_point_t));
-	if (!item) // allocation error
+	if (item == NULL) // allocation error
 		return NULL;
 
 	item->data = copyData(data,dim);
@@ -63,15 +60,14 @@ SPPoint spPointCreate(double* data, int dim, int index){
 	return item;
 }
 
-SPPoint spPointCopy(SPPoint source){
+SPPoint spPointCopy(SPPoint source) {
 	assert (source != NULL);
-	if (!source->data)
+	if (source->data == NULL)
 		return NULL;
 	return spPointCreate(source->data,source->dim,source->index);
 }
 
-void spPointDestroy(SPPoint point)
-{
+void spPointDestroy(SPPoint point) {
 	if (point != NULL)
 	{
 		if (point->data != NULL){
@@ -83,25 +79,22 @@ void spPointDestroy(SPPoint point)
 	}
 }
 
-int spPointGetDimension(SPPoint point)
-{
+int spPointGetDimension(SPPoint point) {
 	assert(point != NULL);
 	return point->dim;
 }
 
-int spPointGetIndex(SPPoint point)
-{
+int spPointGetIndex(SPPoint point) {
 	assert(point != NULL);
 	return point->index;
 }
 
-double spPointGetAxisCoor(SPPoint point, int axis)
-{
+double spPointGetAxisCoor(SPPoint point, int axis) {
 	assert(point != NULL && axis < point->dim && axis >= 0);
 	return point->data[axis];
 }
 
-double spPointL2SquaredDistance(SPPoint p, SPPoint q){
+double spPointL2SquaredDistance(SPPoint p, SPPoint q) {
 	int dimIndex;
 	double l2Dist = 0, currentDist;
 
@@ -114,3 +107,4 @@ double spPointL2SquaredDistance(SPPoint p, SPPoint q){
 
 	return l2Dist;
 }
+
