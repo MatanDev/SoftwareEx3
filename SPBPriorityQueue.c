@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define DEFAULT_INVALID_DOUBLE -1
+#define DEFAULT_INVALID_NUMBER -1
 
 /*
  * A structure used in order to handle the queue data type
@@ -106,14 +106,14 @@ void spBPQueueClear(SPBPQueue source)
 int spBPQueueSize(SPBPQueue source)
 {
 	if(source == NULL || source->queue == NULL)
-		return DEFAULT_INVALID_DOUBLE;
+		return DEFAULT_INVALID_NUMBER;
 	return spListGetSize(source->queue);
 }
 
 int spBPQueueGetMaxSize(SPBPQueue source)
 {
 	if (source == NULL)
-		return DEFAULT_INVALID_DOUBLE;
+		return DEFAULT_INVALID_NUMBER;
 	return source->capacity;
 }
 
@@ -353,7 +353,7 @@ double returnValueFrom(SPBPQueue source, SPListElement (*func)(SPBPQueue)){
 	SPListElement item;
 	double returnValue;
 	if (source == NULL)
-		return DEFAULT_INVALID_DOUBLE;
+		return DEFAULT_INVALID_NUMBER;
 	item = (*func)(source);
 	returnValue = spListElementGetValue(item);
 	spListElementDestroy(item);

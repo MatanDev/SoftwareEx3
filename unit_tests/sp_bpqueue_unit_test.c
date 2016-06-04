@@ -10,8 +10,9 @@
 #define RANDOM_SIZE_RANGE 500
 #define RANDOM_CAPACITY_RANGE 500
 #define RANDOM_SORT_TEST_COUNT 200
+#define DEFAULT_INVALID_NUMBER -1
 
-
+//a method used to create a random queue
 static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SP_BPQUEUE_MSG message;
 	int i, index;
@@ -44,6 +45,7 @@ static SPBPQueue quickRandomQueue(int capacity, int size) {
 	return queue;
 }
 
+//a method used to create a queue given its properties and items
 static SPBPQueue quickQueue(int capacity, int size, ...) {
 	int i;
 	va_list items;
@@ -56,6 +58,7 @@ static SPBPQueue quickQueue(int capacity, int size, ...) {
 	return queue;
 }
 
+// a method used in order to remove all items from a queue, using dequeue
 static void quickDequeue(SPBPQueue queue, int size) {
 	int i;
 	for (i = 0; i < size; i++) {
@@ -63,10 +66,11 @@ static void quickDequeue(SPBPQueue queue, int size) {
 	}
 }
 
+//Test for queue create method
 static bool testBPQueueCreate() {
-	SPBPQueue queue, queue2;
+	SPBPQueue queue = NULL, queue2 = NULL;
 
-	queue = spBPQueueCreate(-1);
+	queue = spBPQueueCreate(DEFAULT_INVALID_NUMBER);
 	ASSERT_TRUE(queue == NULL);
 
 	queue2 = spBPQueueCreate(17);
@@ -80,6 +84,7 @@ static bool testBPQueueCreate() {
 	return true;
 }
 
+//Test for queue copy method
 static bool testBPQueueCopy() {
 	SPBPQueue queue = spBPQueueCreate(1), queue2 = NULL , copy2 = NULL ,copy = NULL;
 	copy = spBPQueueCopy(queue);
@@ -140,11 +145,13 @@ static bool testBPQueueCopy() {
 	return true;
 }
 
+//Test for queue size
 static bool testBPQueueSize() {
-	SPListElement temp;
+	SPListElement temp = NULL, e1 = NULL;
 	SPBPQueue queue = spBPQueueCreate(2);
+
 	ASSERT_TRUE(0 == spBPQueueSize(queue));
-	SPListElement e1 = spListElementCreate(1, 1.0);
+	e1 = spListElementCreate(1, 1.0);
 	spBPQueueEnqueue(queue, e1);
 	ASSERT_TRUE(1 == spBPQueueSize(queue));
 	spListElementSetIndex(e1, 2);
@@ -155,33 +162,40 @@ static bool testBPQueueSize() {
 	spListElementDestroy(temp);
 	spBPQueueDequeue(queue);
 	ASSERT_TRUE(1 == spBPQueueSize(queue));
+
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
 	return true;
 }
 
+//Test for queue max size limit
 static bool testBPQueueMaxSize() {
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPBPQueue queue = quickQueue(5, 4, e2, e3, e1, e4);
-	SPBPQueue queue2;
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL;
+	SPBPQueue queue = NULL;
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+	queue = quickQueue(5, 4, e2, e3, e1, e4);
+
 	ASSERT_TRUE(4 == spBPQueueSize(queue));
 	ASSERT_TRUE(5 == spBPQueueGetMaxSize(queue));
 	ASSERT_TRUE(spBPQueueSize(queue) < spBPQueueGetMaxSize(queue));
+
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
 	spListElementDestroy(e2);
 	spListElementDestroy(e3);
 	spListElementDestroy(e4);
+
 	return true;
 }
 
-//test that a queue if max size 0 is functioning correctly
+//test that a queue is functioning correctly if max size 0
 static bool testBPQueueMaxSize0() {
 	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPBPQueue queue;
+	SPBPQueue queue = NULL;
 
 	queue = spBPQueueCreate(0);
 
@@ -205,25 +219,37 @@ static bool testBPQueueMaxSize0() {
 	return true;
 }
 
+//Test for peek and peek last methods
 static bool testBPQueuePeekFirstandLast() {
-	SPBPQueue queue = spBPQueueCreate(0);
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, first = NULL, last = NULL, temp = NULL;
+	SPBPQueue queue = NULL, queue2 = NULL;
+
+	queue = spBPQueueCreate(0);
 	ASSERT_TRUE(spBPQueuePeek(queue) == NULL);
 	ASSERT_TRUE(spBPQueuePeekLast(queue) == NULL);
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPBPQueue queue2 = quickQueue(5, 4, e2, e3, e1, e4);
-	SPListElement first = spBPQueuePeek(queue2) , temp;
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+
+	queue2 = quickQueue(5, 4, e2, e3, e1, e4);
+
+	first = spBPQueuePeek(queue2);
 	ASSERT_TRUE(spListElementCompare(e1, first) == 0);
+
 	temp = spBPQueuePeek(queue2);
 	ASSERT_TRUE(spListElementCompare(first, temp) == 0);
+
 	spListElementDestroy(temp);
 	spListElementDestroy(first);
-	SPListElement last = spBPQueuePeekLast(queue2);
+
+	last = spBPQueuePeekLast(queue2);
 	ASSERT_TRUE(spListElementCompare(e4, last) == 0);
+
 	temp = spBPQueuePeekLast(queue2);
 	ASSERT_TRUE(spListElementCompare(last, temp) == 0);
+
 	spListElementDestroy(last);
 	spListElementDestroy(temp);
 	spBPQueueDestroy(queue);
@@ -232,50 +258,70 @@ static bool testBPQueuePeekFirstandLast() {
 	spListElementDestroy(e2);
 	spListElementDestroy(e3);
 	spListElementDestroy(e4);
+
 	return true;
 }
 
+//Test for minimum and maximum values
 static bool testBPQueueMinMaxValue() {
-	SPBPQueue queue = spBPQueueCreate(0);
-	ASSERT_TRUE(spBPQueueMinValue(queue) == -1);
-	ASSERT_TRUE(spBPQueueMaxValue(queue) == -1);
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPBPQueue queue2 = quickQueue(5, 4, e2, e3, e1, e4);
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL;
+	SPBPQueue queue = NULL, queue2 = NULL;
+
+	queue = spBPQueueCreate(0);
+	ASSERT_TRUE(spBPQueueMinValue(queue) == DEFAULT_INVALID_NUMBER);
+	ASSERT_TRUE(spBPQueueMaxValue(queue) == DEFAULT_INVALID_NUMBER);
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+
+	queue2 = quickQueue(5, 4, e2, e3, e1, e4);
+
 	ASSERT_TRUE(spBPQueueMinValue(queue2) == 1);
 	ASSERT_TRUE(spBPQueueMaxValue(queue2) == 4);
+
 	spBPQueueDestroy(queue);
 	spBPQueueDestroy(queue2);
 	spListElementDestroy(e1);
 	spListElementDestroy(e2);
 	spListElementDestroy(e3);
 	spListElementDestroy(e4);
+
 	return true;
 }
 
+//Test for is empty and is full methods
 static bool testBPQueueIsEmptyFull() {
-	SPBPQueue queue = spBPQueueCreate(0);
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL;
+	SPBPQueue queue = NULL, queue2 = NULL;
+
+	queue = spBPQueueCreate(0);
 	ASSERT_TRUE(spBPQueueIsEmpty(queue));
 	ASSERT_TRUE(spBPQueueIsFull(queue));
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPListElement e5 = spListElementCreate(5, 5.0);
-	SPBPQueue queue2 = quickQueue(5, 4, e2, e3, e1, e4);
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+	e5 = spListElementCreate(5, 5.0);
+
+	queue2 = quickQueue(5, 4, e2, e3, e1, e4);
 	ASSERT_TRUE(!spBPQueueIsFull(queue2));
 	ASSERT_TRUE(!spBPQueueIsEmpty(queue2));
+
 	spBPQueueEnqueue(queue2, e5);
 	ASSERT_TRUE(spBPQueueIsFull(queue2));
 	ASSERT_TRUE(!spBPQueueIsEmpty(queue2));
+
 	quickDequeue(queue2, 4);
 	ASSERT_TRUE(!spBPQueueIsEmpty(queue2));
 	ASSERT_TRUE(!spBPQueueIsFull(queue2));
+
 	spBPQueueDequeue(queue2);
 	ASSERT_TRUE(spBPQueueIsEmpty(queue2));
 	ASSERT_TRUE(!spBPQueueIsFull(queue2));
+
 	spBPQueueDestroy(queue);
 	spBPQueueDestroy(queue2);
 	spListElementDestroy(e1);
@@ -286,21 +332,31 @@ static bool testBPQueueIsEmptyFull() {
 	return true;
 }
 
+//Test for Enqueue
 static bool testBPQueueEnqueue() {
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPListElement e5 = spListElementCreate(5, 5.0);
-	SPBPQueue queue = quickQueue(4, 4, e1, e2, e4, e5);
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL;
+	SPBPQueue queue = NULL;
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+	e5 = spListElementCreate(5, 5.0);
+	queue = quickQueue(4, 4, e1, e2, e4, e5);
+
 	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e5) == 0);
+
 	spBPQueueEnqueue(queue, e3);
+
 	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e4) == 0);
+
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
+
 	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e1) == 0);
+
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
 	spListElementDestroy(e2);
@@ -310,20 +366,30 @@ static bool testBPQueueEnqueue() {
 	return true;
 }
 
+//Test for the 'clear' method
 static bool testBPQueueClear() {
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
-	SPBPQueue queue = quickQueue(7, 4, e3, e4, e2, e1);
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL;
+	SPBPQueue queue = NULL, queue2 = NULL;
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+	queue = quickQueue(7, 4, e3, e4, e2, e1);
+
 	spBPQueueClear(queue);
+
 	ASSERT_TRUE(0 == spBPQueueSize(queue));
 	ASSERT_TRUE(7 == spBPQueueGetMaxSize(queue));
+
 	ASSERT_TRUE(spBPQueuePeek(queue) == NULL);
 	ASSERT_TRUE(spBPQueuePeekLast(queue) == NULL); // validate that maxElement is null
-	SPBPQueue queue2 = spBPQueueCreate(19);
+
+	queue2 = spBPQueueCreate(19);
+
 	spBPQueueClear(queue2);
 	ASSERT_TRUE(0 == spBPQueueSize(queue2));
+
 	spBPQueueDestroy(queue);
 	spBPQueueDestroy(queue2);
 	spListElementDestroy(e1);
@@ -333,16 +399,20 @@ static bool testBPQueueClear() {
 	return true;
 }
 
+//Test for Destroy method
 static bool testBPQueueDestroy() {
 	spBPQueueDestroy(NULL);
 	return true;
 }
 
+
+//Test for the queue ordered invariant, also tests the enqueue and dequeue
 static bool testSorted(){
 	SPListElement prevElement = NULL, currentElement = NULL;
 	SP_BPQUEUE_MSG message;
 	int size,max_size, counter,i, numOfTests = RANDOM_SORT_TEST_COUNT;
 	SPBPQueue queue = NULL;
+
 	for (i = 0 ; i< numOfTests ; i++)
 	{
 		size = (int)(rand() % RANDOM_SIZE_RANGE);
