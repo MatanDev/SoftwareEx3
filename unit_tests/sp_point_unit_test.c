@@ -6,6 +6,8 @@
 
 #define epsilon_hard 2.25e-308
 #define epsilon 0.00001
+#define RANDOM_TESTS_COUNT 100
+#define RANDOM_TESTS_DIM_RANGE 15
 
 //calcs a squere root (at epsilon_hard error)
 double sqroot(double x)
@@ -163,8 +165,8 @@ bool pointTestDistanceNotNegative()
 	double p1p2;
 	SPPoint p1, p2;
 
-	for (i = 0; i < 100; i++){
-		dim = 1 + (int)(rand() % 15);
+	for (i = 0; i < RANDOM_TESTS_COUNT; i++){
+		dim = 1 + (int)(rand() % RANDOM_TESTS_DIM_RANGE);
 		p1 = getRandomPoint(dim);
 		p2 = getRandomPoint(dim);
 
@@ -185,8 +187,8 @@ bool pointTestDistanceSymmetric()
 	double p1p2, p2p1;
 	SPPoint p1, p2;
 
-	for (i = 0; i < 100; i++){
-		dim = 1 + (int)(rand() % 15);
+	for (i = 0; i < RANDOM_TESTS_COUNT; i++){
+		dim = 1 + (int)(rand() % RANDOM_TESTS_DIM_RANGE);
 		p1 = getRandomPoint(dim);
 		p2 = getRandomPoint(dim);
 
@@ -208,8 +210,8 @@ bool pointTestTriangleInequality()
 	double p1p2, p1p3, p3p2;
 	SPPoint p1, p2, p3;
 
-	for (i = 0; i < 100; i++){
-		dim = 1 + (int)(rand() % 15);
+	for (i = 0; i < RANDOM_TESTS_COUNT; i++){
+		dim = 1 + (int)(rand() % RANDOM_TESTS_DIM_RANGE);
 		p1 = getRandomPoint(dim);
 		p2 = getRandomPoint(dim);
 		p3 = getRandomPoint(dim);

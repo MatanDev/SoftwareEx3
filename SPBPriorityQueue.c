@@ -2,7 +2,6 @@
 #include "SPList.h"
 #include <stdlib.h>
 #include <assert.h>
-#include <stdio.h> //TODO - remove at production
 
 #define DEFAULT_INVALID_DOUBLE -1
 
@@ -247,31 +246,6 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement el
 	return SP_BPQUEUE_SUCCESS;
 }
 
-void PrintQueue(SPBPQueue source){
-	SPListElement iterator;
-	if (source == NULL){
-		puts("Source is null\n");
-		fflush(NULL);
-		return;
-	}
-	if (source->queue == NULL){
-		puts("Queue is null\n");
-			fflush(NULL);
-			return;
-	}
-	puts(" Queue : ");
-	fflush(NULL);
-	for(iterator = spListGetFirst(source->queue) ; iterator ; iterator = spListGetNext(source->queue))
-    {
-	   printf("%f , ", spListElementGetValue(iterator));
-	   fflush(NULL);
-	 }
-	printf(" [max = %f]",spListElementGetValue(source->maxElement));
-	iterator = NULL;
-	puts("\n");
-    fflush(NULL);
-}
-
 /*
  * The method inserts an item to the queue,
  * assuming the queue is not empty
@@ -286,12 +260,10 @@ void PrintQueue(SPBPQueue source){
 SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElement){
 	SPListElement currElemInQueue = spListGetFirst(source->queue);
 
-	assert(currElemInQueue != NULL && newElement != NULL); //TODO - remove at production
 	// TODO - check if < or <=
 	while (currElemInQueue != NULL && spListElementCompare(currElemInQueue, newElement) <= 0)
 	{
 		currElemInQueue = spListGetNext(source->queue);
-		assert( newElement != NULL); //TODO - remove at production
 	}
 
 	if (currElemInQueue != NULL) // currElemInQueue > newElement
@@ -309,16 +281,13 @@ SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element)
 	if (source == NULL || source->queue == NULL || element == NULL)
 		return SP_BPQUEUE_INVALID_ARGUMENT;
 
-	//TODO - if we keep it this way and not full (check with the forum) than we should change the method documentation accordingly
 	if (spBPQueueGetMaxSize(source) == 0)
-		return SP_BPQUEUE_SUCCESS;
+		return SP_BPQUEUE_FULL;
 
 
 	// the list is full and the element is greater than all the current items
-	//TODO - if we need < than we need to change the logic of the next lines
 	if (spBPQueueIsFull(source) && spListElementCompare(element, source->maxElement) >= 0){
-		//TODO - if we keep it this way and not full (check with the forum) than we should change the method documentation accordingly
-		return SP_BPQUEUE_SUCCESS;
+		return SP_BPQUEUE_FULL;
 	}
 
 	if (spBPQueueIsEmpty(source))
@@ -335,7 +304,6 @@ SP_BPQUEUE_MSG spBPQueueDequeue(SPBPQueue source) {
 	if (source == NULL)
 		return SP_BPQUEUE_INVALID_ARGUMENT;
 
-	assert(source); //TODO - remove before production
 	if (spBPQueueIsEmpty(source))
 		return SP_BPQUEUE_EMPTY;
 

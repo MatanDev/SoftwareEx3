@@ -38,8 +38,6 @@
 /** type used to define Bounded priority queue **/
 typedef struct sp_bp_queue_t* SPBPQueue;
 
-void PrintQueue(SPBPQueue source); //TODO - remove at production
-
 /** type for error reporting **/
 typedef enum sp_bp_queue_msg_t {
 	SP_BPQUEUE_OUT_OF_MEMORY,
