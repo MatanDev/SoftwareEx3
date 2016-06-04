@@ -515,7 +515,7 @@ static bool testBPQueueDestroy() {
 }
 
 //Test for the queue ordered invariant, also tests the enqueue and dequeue
-static bool testSorted(){
+static bool testBPQueueSorted(){
 	SPListElement prevElement = NULL, currentElement = NULL;
 	SP_BPQUEUE_MSG message;
 	int size,max_size, counter,i, numOfTests = RANDOM_SORT_TEST_COUNT;
@@ -575,7 +575,7 @@ int main() {
 	RUN_TEST(testBPQueueMinMaxValue);
 	RUN_TEST(testBPQueueClear);
 	RUN_TEST(testBPQueueDestroy);
-	RUN_TEST(testSorted);
+	RUN_TEST(testBPQueueSorted);
 	RUN_TEST(testBPQueueIsEmptyFull);
 	RUN_TEST(testBPQueueEnqueue);
 	RUN_TEST(testBPQueueDequeue);
