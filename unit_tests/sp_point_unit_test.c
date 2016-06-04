@@ -41,6 +41,8 @@ bool pointBasicCopyTest() {
 	spPointDestroy(q);
 	return true;
 }
+
+//basic check for L2Distance
 bool pointBasicL2Distance() {
 	double data1[2] = { 1.0, 1.0 };
 	double data2[2] = { 1.0, 0.0 };
@@ -58,6 +60,7 @@ bool pointBasicL2Distance() {
 	return true;
 }
 
+//checks for correct handling where given invalid arguments
 bool pointCreateInvalidArgumentsTest(){
 	SPPoint p;
 	double data[4] = { 1.0, 2.0 , 5.5 , 60 };
@@ -83,6 +86,7 @@ bool pointCreateInvalidArgumentsTest(){
 	return true;
 }
 
+//another test for L2Distance correctness
 bool pointBasicL2Distance2() {
 	double data1[4] = { 1.0, 2.0 , 5.5 , 60 };
 	double data2[4] = { 1.0, 0.0 , 0.0 , 6.8 };
@@ -99,6 +103,7 @@ bool pointBasicL2Distance2() {
 	return true;
 }
 
+//test the copy method
 bool pointCopyTest() {
 	int i;
 	double data[4] = { 2.2, 11.99 , 1.0 , 5 };
@@ -136,6 +141,7 @@ bool pointCopyTest() {
 	return true;
 }
 
+//used to generate a random point
 SPPoint getRandomPoint(int dim)
 {
 	int i;
@@ -150,7 +156,7 @@ SPPoint getRandomPoint(int dim)
 	return p;
 }
 
-
+//tests that L2Distance is always not negative
 bool pointTestDistanceNotNegative()
 {
 	int dim , i;
@@ -172,8 +178,8 @@ bool pointTestDistanceNotNegative()
 	return true;
 }
 
-
-bool pointTestDistanceSymetric()
+//tests that L2Distance is always symmetric
+bool pointTestDistanceSymmetric()
 {
 	int dim , i;
 	double p1p2,p2p1;
@@ -195,6 +201,7 @@ bool pointTestDistanceSymetric()
 	return true;
 }
 
+//tests that L2Distance is respecting the triangle inequality
 bool pointTestTriangleInequality()
 {
 	int dim , i;
@@ -222,6 +229,7 @@ bool pointTestTriangleInequality()
 	return true;
 }
 
+//tests the destroy method for handling invalid arguments
 bool pointDestroyInvalidArgumentsTest()
 {
 	spPointDestroy(NULL);
@@ -238,7 +246,7 @@ bool pointDestroyInvalidArgumentsTest()
 	RUN_TEST(pointDestroyInvalidArgumentsTest);
 
 	RUN_TEST(pointTestTriangleInequality);
-	RUN_TEST(pointTestDistanceSymetric);
+	RUN_TEST(pointTestDistanceSymmetric);
 	RUN_TEST(pointTestDistanceNotNegative);
 
 	return 0;

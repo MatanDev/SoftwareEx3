@@ -5,7 +5,33 @@
 /**
  * SP Bounded Priority Queue summary
  *
- * TODO Complete documentation
+ * Implements a Priority Queue type.
+ * The queue size is limited by an integer called capacity.
+ * The elements of the queue are stored in a SPList type, while keeping
+ * the invariant of - the list is ordered (first item is smallest)
+ * The queue supports storing similar items, and as the
+ * enqueue action copy's the content of the given item, the internal order of identical items is not relevant
+ * The type also stores a pointer to the last element in the queue, which is also the largest one
+ * if the queue is empty, the pointer is NULL
+ *
+ * The following functions are available:
+ *
+ *   spBPQueueCreate            - Creates a new empty queue, limited to the given maximum size
+ *   spBPQueueDestroy           - Deletes an existing queue and frees all resources
+ *   spBPQueueCopy              - Copies an existing queue, with the same capacity
+ *   spBPQueueClear             - Removes all the elements from the queue
+ *   spBPQueueSize              - Returns the size of a given queue
+ *   spBPQueueGetMaxSize        - Returns the maximum size limit (capacity) of the given queue
+ *   spBPQueueEnqueue           - Inserts a new item to the queue, the inserted item is a copy of the given one,
+ *                                the item would not be inserted if it is larger than the maximum
+ *                                item of the queue, and the queue is at full capacity
+ *   spBPQueueDequeue           - Removes the minimal item from the queue
+ *   spBPQueuePeek              - Returns a copy of the minimal item in the queue
+ *   spBPQueuePeekLast          - Returns a copy of the maximal item in the queue
+ *   spBPQueueMinValue          - Returns the value of the minimal item in the queue
+ *   spBPQueueMaxValue          - Returns the value of the maximal item in the queue
+ *   spBPQueueIsEmpty           - Returns true if and only if the queue is empty
+ *   spBPQueueIsFull            - Returns true if and only if the queue is full
  */
 
 
