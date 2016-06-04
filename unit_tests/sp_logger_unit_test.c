@@ -84,7 +84,7 @@ static bool basicLoggerWarningTest() {
 	return true;
 }
 
-//All messages but Info messages should be printed in debug level
+//All messages but Debug messages should be printed in Info level
 static bool basicLoggerInfoTest() {
 	const char* expectedFile = "basicLoggerInfoTestExp.log";
 	const char* testFile = "basicLoggerInfoTest.log";
@@ -98,6 +98,7 @@ static bool basicLoggerInfoTest() {
 	return true;
 }
 
+//Check logger-undefined error in all of the print functions
 static bool basicLoggerUndefinedTest() {
 	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_UNDIFINED);
 	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_UNDIFINED);
@@ -107,6 +108,7 @@ static bool basicLoggerUndefinedTest() {
 	return true;
 }
 
+//Check logger-invalid-argument error in all of the print functions
 static bool basicLoggerInvalidArgumentsTest() {
 	const char* testFile = "basicLoggerTest.log";
 	ASSERT_TRUE(spLoggerCreate(testFile,SP_LOGGER_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
@@ -119,6 +121,7 @@ static bool basicLoggerInvalidArgumentsTest() {
 	return true;
 }
 
+//Check spLoggerPrintMsg function
 static bool basicLoggerPrintMsgTest() {
 	const char* expectedFile = "basicLoggerPrintMsgTestExp.log";
 	const char* testFile = "basicLoggerPrintMsgTest.log";
@@ -138,21 +141,7 @@ static bool basicLoggerPrintMsgTest() {
 	ASSERT_TRUE(identicalFiles(testFile,expectedFile));
 	return true;
 }
-/*
-static bool basicLoggerStdoutTest() {
-	ASSERT_TRUE(spLoggerCreate(NULL,SP_LOGGER_DEBUG_INFO_WARNING_ERROR_LEVEL) == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg1") == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintWarning("MSGB","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintInfo("MSGC") == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintError("MSGA","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg2") == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg3") == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg4") == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintDebug("MSGD","sp_logger_unit_test.c",__func__,__LINE__) == SP_LOGGER_SUCCESS);
-	ASSERT_TRUE(spLoggerPrintMsg("PrintMsg5") == SP_LOGGER_SUCCESS);
-	spLoggerDestroy();
-	return true;
-}*/
+
 /*
 int main() {
 	RUN_TEST(basicLoggerTest);

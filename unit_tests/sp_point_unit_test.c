@@ -10,7 +10,7 @@
 //calcs a squere root (at epsilon_hard error)
 double sqroot(double x)
 {
-    double rslt=x/3, prev, diff=1;
+    double rslt = x / 3, prev, diff = 1;
     if (x <= 0) return 0;
 
     do
@@ -27,7 +27,7 @@ double sqroot(double x)
 //Checks if copy Works
 bool pointBasicCopyTest() {
 	int i;
-	double data[2] = { 1.0, 1.0 };
+	double data[2] = { 1.0 , 1.0 };
 	int dim = 2;
 	int index = 1;
 	SPPoint p = spPointCreate(data, dim, index);
@@ -44,8 +44,8 @@ bool pointBasicCopyTest() {
 
 //basic check for L2Distance
 bool pointBasicL2Distance() {
-	double data1[2] = { 1.0, 1.0 };
-	double data2[2] = { 1.0, 0.0 };
+	double data1[2] = { 1.0 , 1.0 };
+	double data2[2] = { 1.0 , 0.0 };
 	int dim1 = 2;
 	int dim2 = 2;
 	int index1 = 1;
@@ -63,24 +63,24 @@ bool pointBasicL2Distance() {
 //checks for correct handling where given invalid arguments
 bool pointCreateInvalidArgumentsTest(){
 	SPPoint p;
-	double data[4] = { 1.0, 2.0 , 5.5 , 60 };
+	double data[4] = { 1.0 , 2.0 , 5.5 , 60 };
 	int dim, index;
 
 	dim = 5;
 	index = 4;
-	p = spPointCreate(NULL,dim,index);
+	p = spPointCreate(NULL, dim, index);
 	ASSERT_TRUE(p == NULL);
 	spPointDestroy(p);
 
 	dim = 0;
 	index = 4;
-	p = spPointCreate((double*)data,dim,index);
+	p = spPointCreate((double*)data, dim, index);
 	ASSERT_TRUE(p == NULL);
 	spPointDestroy(p);
 
 	dim = 4;
 	index = -1;
-	p = spPointCreate((double*)data,dim,index);
+	p = spPointCreate((double*)data, dim, index);
 	ASSERT_TRUE(p == NULL);
 	spPointDestroy(p);
 	return true;
@@ -88,16 +88,16 @@ bool pointCreateInvalidArgumentsTest(){
 
 //another test for L2Distance correctness
 bool pointBasicL2Distance2() {
-	double data1[4] = { 1.0, 2.0 , 5.5 , 60 };
-	double data2[4] = { 1.0, 0.0 , 0.0 , 6.8 };
+	double data1[4] = { 1.0 , 2.0 , 5.5 , 60 };
+	double data2[4] = { 1.0 , 0.0 , 0.0 , 6.8 };
 	int dim1 = 4;
 	int dim2 = 4;
 	int index1 = 1;
 	int index2 = 1;
 	SPPoint p = spPointCreate((double *)data1, dim1, index1);
 	SPPoint q = spPointCreate((double *)data2, dim2, index2);
-	ASSERT_TRUE(spPointL2SquaredDistance(p,q) - 2864.49 < epsilon &&
-			spPointL2SquaredDistance(p,q) - 2864.49 > -epsilon);
+	ASSERT_TRUE(spPointL2SquaredDistance(p, q) - 2864.49 < epsilon &&
+			spPointL2SquaredDistance(p, q) - 2864.49 > -epsilon);
 	spPointDestroy(p);
 	spPointDestroy(q);
 	return true;
@@ -106,7 +106,7 @@ bool pointBasicL2Distance2() {
 //test the copy method
 bool pointCopyTest() {
 	int i;
-	double data[4] = { 2.2, 11.99 , 1.0 , 5 };
+	double data[4] = { 2.2 , 11.99 , 1.0 , 5 };
 	int dim = 4;
 	int index = 5;
 	SPPoint p1 = spPointCreate(data, dim, index);
@@ -127,7 +127,7 @@ bool pointCopyTest() {
 			&& spPointGetIndex(p4) == index );
 
 
-	for (i = 0; i < dim ; i++) {
+	for (i = 0; i < dim; i++) {
 		ASSERT_TRUE(spPointGetAxisCoor(p1, i) == data[i]);
 		ASSERT_TRUE(spPointGetAxisCoor(p2, i) == data[i]);
 		ASSERT_TRUE(spPointGetAxisCoor(p3, i) == data[i]);
@@ -147,11 +147,11 @@ SPPoint getRandomPoint(int dim)
 	int i;
 	SPPoint p;
 	double* data = (double*)calloc(dim, sizeof(double));
-	for (i=0 ;i< dim ; i++)
+	for (i = 0; i < dim; i++)
 	{
-		data[i] = ((double)rand()/((double)RAND_MAX/100));
+		data[i] = ((double)rand() / ((double)RAND_MAX / 100));
 	}
-	p = spPointCreate(data,dim,1);
+	p = spPointCreate(data, dim, 1);
 	free(data);
 	return p;
 }
@@ -159,16 +159,16 @@ SPPoint getRandomPoint(int dim)
 //tests that L2Distance is always not negative
 bool pointTestDistanceNotNegative()
 {
-	int dim , i;
+	int dim, i;
 	double p1p2;
-	SPPoint p1,p2;
+	SPPoint p1, p2;
 
-	for (i=0 ; i < 100 ; i++){
+	for (i = 0; i < 100; i++){
 		dim = 1 + (int)(rand() % 15);
 		p1 = getRandomPoint(dim);
 		p2 = getRandomPoint(dim);
 
-		p1p2 = spPointL2SquaredDistance(p1,p2);
+		p1p2 = spPointL2SquaredDistance(p1, p2);
 
 		ASSERT_TRUE(p1p2 >= 0);
 
@@ -181,17 +181,17 @@ bool pointTestDistanceNotNegative()
 //tests that L2Distance is always symmetric
 bool pointTestDistanceSymmetric()
 {
-	int dim , i;
-	double p1p2,p2p1;
-	SPPoint p1,p2;
+	int dim, i;
+	double p1p2, p2p1;
+	SPPoint p1, p2;
 
-	for (i=0 ; i < 100 ; i++){
+	for (i = 0; i < 100; i++){
 		dim = 1 + (int)(rand() % 15);
 		p1 = getRandomPoint(dim);
 		p2 = getRandomPoint(dim);
 
-		p1p2 = spPointL2SquaredDistance(p1,p2);
-		p2p1 = spPointL2SquaredDistance(p2,p1);
+		p1p2 = spPointL2SquaredDistance(p1, p2);
+		p2p1 = spPointL2SquaredDistance(p2, p1);
 
 		ASSERT_TRUE(p1p2 - p2p1 <= epsilon && p1p2 - p2p1 >= -epsilon);
 
@@ -204,19 +204,19 @@ bool pointTestDistanceSymmetric()
 //tests that L2Distance is respecting the triangle inequality
 bool pointTestTriangleInequality()
 {
-	int dim , i;
-	double p1p2,p1p3,p3p2;
-	SPPoint p1,p2,p3;
+	int dim, i;
+	double p1p2, p1p3, p3p2;
+	SPPoint p1, p2, p3;
 
-	for (i=0 ; i < 100 ; i++){
+	for (i = 0; i < 100; i++){
 		dim = 1 + (int)(rand() % 15);
 		p1 = getRandomPoint(dim);
 		p2 = getRandomPoint(dim);
 		p3 = getRandomPoint(dim);
 
-		p1p2 = sqroot(spPointL2SquaredDistance(p1,p2));
-		p1p3 = sqroot(spPointL2SquaredDistance(p1,p3));
-		p3p2 = sqroot(spPointL2SquaredDistance(p3,p2));
+		p1p2 = sqroot(spPointL2SquaredDistance(p1, p2));
+		p1p3 = sqroot(spPointL2SquaredDistance(p1, p3));
+		p3p2 = sqroot(spPointL2SquaredDistance(p3, p2));
 
 		ASSERT_TRUE(p1p2 <= p1p3 + p3p2 + epsilon);
 		ASSERT_TRUE(p1p3 <= p1p2 + p3p2 + epsilon);
