@@ -102,11 +102,10 @@ double spPointGetAxisCoor(SPPoint point, int axis)
 }
 
 double spPointL2SquaredDistance(SPPoint p, SPPoint q){
-	assert(p != NULL && q != NULL && p->dim == q->dim);
-
 	int dimIndex;
-	double l2Dist, currentDist;
-	l2Dist = 0;
+	double l2Dist = 0, currentDist;
+
+	assert(p != NULL && q != NULL && p->dim == q->dim);
 
 	for (dimIndex = 0;dimIndex < p->dim ; dimIndex++){
 		currentDist = p->data[dimIndex]-q->data[dimIndex];
