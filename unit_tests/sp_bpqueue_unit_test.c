@@ -86,13 +86,15 @@ static bool testBPQueueCreate() {
 
 //Test for queue copy method
 static bool testBPQueueCopy() {
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, temp = NULL;
 	SPBPQueue queue = spBPQueueCreate(1), queue2 = NULL , copy2 = NULL ,copy = NULL;
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 3.0);
+	e4 = spListElementCreate(4, 4.0);
+
 	copy = spBPQueueCopy(queue);
-	SPListElement temp;
-	SPListElement e1 = spListElementCreate(1, 1.0);
-	SPListElement e2 = spListElementCreate(2, 2.0);
-	SPListElement e3 = spListElementCreate(3, 3.0);
-	SPListElement e4 = spListElementCreate(4, 4.0);
 
 	ASSERT_TRUE(spBPQueueCopy(NULL) == NULL); // test source is NULL
 
@@ -462,7 +464,7 @@ static bool testSorted(){
 	return true;
 }
 
-
+/*
 int main() {
 	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
@@ -479,5 +481,5 @@ int main() {
 	RUN_TEST(testBPQueueMaxSize0);
 
 	return 0;
-}
+}*/
 
