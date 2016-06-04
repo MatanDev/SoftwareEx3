@@ -334,7 +334,7 @@ static bool testBPQueueIsEmptyFull() {
 
 //Test for Enqueue
 static bool testBPQueueEnqueue() {
-	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL;
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL, temp = NULL;
 	SPBPQueue queue = NULL;
 
 	e1 = spListElementCreate(1, 1.0);
@@ -344,18 +344,24 @@ static bool testBPQueueEnqueue() {
 	e5 = spListElementCreate(5, 5.0);
 	queue = quickQueue(4, 4, e1, e2, e4, e5);
 
-	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e5) == 0);
+	temp = spBPQueuePeekLast(queue);
+	ASSERT_TRUE(spListElementCompare(temp, e5) == 0);
+	spListElementDestroy(temp);
 
 	spBPQueueEnqueue(queue, e3);
 
-	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e4) == 0);
+	temp = spBPQueuePeekLast(queue);
+	ASSERT_TRUE(spListElementCompare(temp, e4) == 0);
+	spListElementDestroy(temp);
 
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
 
-	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e1) == 0);
+	temp = spBPQueuePeekLast(queue);
+	ASSERT_TRUE(spListElementCompare(temp, e1) == 0);
+	spListElementDestroy(temp);
 
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
