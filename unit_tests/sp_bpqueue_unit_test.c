@@ -219,7 +219,7 @@ static bool testBPQueueMaxSize() {
 	queue2 = spBPQueueCreate(0);
 	ASSERT_TRUE(0 == spBPQueueGetMaxSize(queue2));
 	//ASSERT_TRUE(SP_BPQUEUE_FULL == spBPQueueEnqueue(queue2));
-	ASSERT_TRUE(SP_BPQUEUE_SUCCESS == spBPQueueEnqueue(queue2));
+	ASSERT_TRUE(SP_BPQUEUE_SUCCESS == spBPQueueEnqueue(queue2, e1));
 	ASSERT_TRUE(0 == spBPQueueSize(queue2));
 	ASSERT_TRUE(spBPQueueIsFull(queue2));
 	ASSERT_TRUE(spBPQueueIsEmpty(queue2));
@@ -459,7 +459,7 @@ void interactive_test(){
 	}
 	spBPQueueDestroy(queue);
 }*/
-
+/*
 int main() {
 	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
@@ -478,3 +478,4 @@ int main() {
 	return 0;
 }
 
+*/

@@ -1,0 +1,15 @@
+This is a pretty long sentence that we wish to add to the log in order to see how the logger handles it.
+---ERROR---
+- file: sp_logger_unit_test.c
+- function: basicLoggerLinesTest
+- line: 153
+- message: This is an error message that contains new line in the end
+
+This sentence contains a new line in the end and we wish to check how the logger handles this kind of messages.
+
+---ERROR---
+- file: sp_logger_unit_test.c
+- function: basicLoggerLinesTest
+- line: 157
+- message: Yet another error message that contains a new line in the end
+
