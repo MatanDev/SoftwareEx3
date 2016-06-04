@@ -303,6 +303,7 @@ static bool testBPQueueEnqueue() {
 	spBPQueueEnqueue(queue, e1);
 	spBPQueueEnqueue(queue, e1);
 	ASSERT_TRUE(spListElementCompare(spBPQueuePeekLast(queue), e1) == 0);
+	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
 	spListElementDestroy(e2);
 	spListElementDestroy(e3);
