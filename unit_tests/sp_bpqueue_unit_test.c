@@ -104,15 +104,25 @@ static void quickDequeue(SPBPQueue queue, int size) {
 }
 
 static bool testBPQueueCreate() {
-	SPBPQueue queue = spBPQueueCreate(7);
-	ASSERT_TRUE(queue != NULL);
-	spBPQueueDestroy(queue);
+	SPBPQueue queue, queue2;
+
+	queue = spBPQueueCreate(-1);
+	ASSERT_TRUE(queue == NULL);
+
+	queue2 = spBPQueueCreate(17);
+	ASSERT_TRUE(queue2 != NULL);
+	ASSERT_TRUE(spBPQueueSize(queue2) == 0);
+	ASSERT_TRUE(spBPQueueGetMaxSize(queue2) == 17);
+	ASSERT_TRUE(spBPQueuePeekLast(queue2) == NULL); // validate that maxElem is null
+
+	spBPQueueDestroy(queue2);
+
 	return true;
 }
 
 
 static bool testBPQueueCopy() {
-	ASSERT_TRUE(spBPQueueCopy(NULL) == NULL);
+	ASSERT_TRUE(spBPQueueCopy(NULL) == NULL); // test source is NULL
 	SPBPQueue queue = spBPQueueCreate(1);
 	SPBPQueue copy = spBPQueueCopy(queue);
 	ASSERT_TRUE(copy != NULL);
@@ -195,6 +205,7 @@ static bool testBPQueueMaxSize() {
 	SPListElement e3 = spListElementCreate(3, 3.0);
 	SPListElement e4 = spListElementCreate(4, 4.0);
 	SPBPQueue queue = quickQueue(5, 4, e2, e3, e1, e4);
+	SPBPQueue queue2;
 	ASSERT_TRUE(4 == spBPQueueSize(queue));
 	ASSERT_TRUE(5 == spBPQueueGetMaxSize(queue));
 	ASSERT_TRUE(spBPQueueSize(queue) < spBPQueueGetMaxSize(queue));
@@ -203,6 +214,16 @@ static bool testBPQueueMaxSize() {
 	spListElementDestroy(e2);
 	spListElementDestroy(e3);
 	spListElementDestroy(e4);
+
+	// test maxsize 0
+	queue2 = spBPQueueCreate(0);
+	ASSERT_TRUE(0 == spBPQueueGetMaxSize(queue2));
+	//ASSERT_TRUE(SP_BPQUEUE_FULL == spBPQueueEnqueue(queue2));
+	ASSERT_TRUE(SP_BPQUEUE_SUCCESS == spBPQueueEnqueue(queue2));
+	ASSERT_TRUE(0 == spBPQueueSize(queue2));
+	ASSERT_TRUE(spBPQueueIsFull(queue2));
+	ASSERT_TRUE(spBPQueueIsEmpty(queue2));
+
 	return true;
 }
 
