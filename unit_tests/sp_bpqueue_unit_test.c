@@ -9,7 +9,7 @@
 #define RANDOM_VALUE_BALANCER 100
 #define RANDOM_SIZE_RANGE 500
 #define RANDOM_CAPACITY_RANGE 500
-#define RANDOM_SORT_TEST_COUNT 200
+#define RANDOM_SORT_TEST_COUNT 100
 #define DEFAULT_INVALID_NUMBER -1
 
 //a method used to create a random queue
@@ -338,6 +338,7 @@ static bool testBPQueueIsEmptyFull() {
 static bool testBPQueueEnqueue() {
 	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL, temp = NULL;
 	SPBPQueue queue = NULL;
+	SP_BPQUEUE_MSG message;
 
 	e1 = spListElementCreate(1, 1.0);
 	e2 = spListElementCreate(2, 2.0);
@@ -350,20 +351,35 @@ static bool testBPQueueEnqueue() {
 	ASSERT_TRUE(spListElementCompare(temp, e5) == 0);
 	spListElementDestroy(temp);
 
-	spBPQueueEnqueue(queue, e3);
+	message = spBPQueueEnqueue(queue, e3);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
 
 	temp = spBPQueuePeekLast(queue);
 	ASSERT_TRUE(spListElementCompare(temp, e4) == 0);
 	spListElementDestroy(temp);
 
-	spBPQueueEnqueue(queue, e1);
-	spBPQueueEnqueue(queue, e1);
-	spBPQueueEnqueue(queue, e1);
-	spBPQueueEnqueue(queue, e1);
+	message = spBPQueueEnqueue(queue, e1);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+	message = spBPQueueEnqueue(queue, e1);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+	message = spBPQueueEnqueue(queue, e1);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+	message = spBPQueueEnqueue(queue, e1);
+	ASSERT_TRUE(message == SP_BPQUEUE_FULL);
 
 	temp = spBPQueuePeekLast(queue);
 	ASSERT_TRUE(spListElementCompare(temp, e1) == 0);
 	spListElementDestroy(temp);
+
+	//test invalid arguments
+	message = spBPQueueEnqueue(NULL, NULL);
+	ASSERT_TRUE(message == SP_BPQUEUE_INVALID_ARGUMENT);
+
+	message = spBPQueueEnqueue(queue, NULL);
+	ASSERT_TRUE(message == SP_BPQUEUE_INVALID_ARGUMENT);
+
+	message = spBPQueueEnqueue(NULL, e1);
+	ASSERT_TRUE(message == SP_BPQUEUE_INVALID_ARGUMENT);
 
 	spBPQueueDestroy(queue);
 	spListElementDestroy(e1);
@@ -373,6 +389,71 @@ static bool testBPQueueEnqueue() {
 	spListElementDestroy(e5);
 	return true;
 }
+
+//Test for Dequeue
+static bool testBPQueueDequeue() {
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL, temp = NULL;
+	SPBPQueue queue = NULL;
+	SP_BPQUEUE_MSG message;
+
+	e1 = spListElementCreate(1, 1.0);
+	e2 = spListElementCreate(2, 2.0);
+	e3 = spListElementCreate(3, 2.0);
+	e4 = spListElementCreate(4, 7.0);
+	e5 = spListElementCreate(5, 5.0);
+	queue = quickQueue(5, 5, e1, e2, e3, e4, e5);
+
+	temp = spBPQueuePeek(queue);
+	ASSERT_TRUE(spListElementCompare(temp,e1) == 0);
+	spListElementDestroy(temp);
+
+	message = spBPQueueDequeue(queue);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+
+	temp = spBPQueuePeek(queue);
+	ASSERT_TRUE(spListElementCompare(temp,e2) == 0);
+	spListElementDestroy(temp);
+
+	message = spBPQueueDequeue(queue);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+
+	temp = spBPQueuePeek(queue);
+	ASSERT_TRUE(spListElementCompare(temp,e3) == 0);
+	spListElementDestroy(temp);
+
+	message = spBPQueueDequeue(queue);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+
+	temp = spBPQueuePeek(queue);
+	ASSERT_TRUE(spListElementCompare(temp,e5) == 0);
+	spListElementDestroy(temp);
+
+	message = spBPQueueDequeue(queue);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+
+	temp = spBPQueuePeek(queue);
+	ASSERT_TRUE(spListElementCompare(temp,e4) == 0);
+	spListElementDestroy(temp);
+
+	message = spBPQueueDequeue(queue);
+	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
+
+	message = spBPQueueDequeue(queue);
+	ASSERT_TRUE(message == SP_BPQUEUE_EMPTY);
+
+	//test invalid argument
+	message  = spBPQueueDequeue(NULL);
+	ASSERT_TRUE(message == SP_BPQUEUE_INVALID_ARGUMENT);
+
+	spBPQueueDestroy(queue);
+	spListElementDestroy(e1);
+	spListElementDestroy(e2);
+	spListElementDestroy(e3);
+	spListElementDestroy(e4);
+	spListElementDestroy(e5);
+	return true;
+}
+
 
 //Test for the 'clear' method
 static bool testBPQueueClear() {
@@ -464,7 +545,7 @@ static bool testSorted(){
 	return true;
 }
 
-/*
+
 int main() {
 	srand(time(NULL));
 	RUN_TEST(testBPQueueCreate);
@@ -478,8 +559,9 @@ int main() {
 	RUN_TEST(testSorted);
 	RUN_TEST(testBPQueueIsEmptyFull);
 	RUN_TEST(testBPQueueEnqueue);
+	RUN_TEST(testBPQueueDequeue);
 	RUN_TEST(testBPQueueMaxSize0);
 
 	return 0;
-}*/
+}
 
