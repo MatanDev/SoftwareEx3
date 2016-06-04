@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stdio.h> //TODO - remove at production
 
+#define DEFAULT_INVALID_DOUBLE -1
+
 /*
  * A structure used in order to handle the queue data type
  * maxElement - a list element representing the maximum element in the queue
@@ -105,14 +107,14 @@ void spBPQueueClear(SPBPQueue source)
 int spBPQueueSize(SPBPQueue source)
 {
 	if(source == NULL || source->queue == NULL)
-		return -1;
+		return DEFAULT_INVALID_DOUBLE;
 	return spListGetSize(source->queue);
 }
 
 int spBPQueueGetMaxSize(SPBPQueue source)
 {
 	if (source == NULL)
-		return -1;
+		return DEFAULT_INVALID_DOUBLE;
 	return source->capacity;
 }
 
@@ -377,13 +379,13 @@ SPListElement spBPQueuePeekLast(SPBPQueue source)
  * @param source - the given queue to extract the data from
  * @param func - a function pointer that given a queue, extract some element from it
  * @return
- * -1 if source is NULL, otherwise the func(source) value.
+ * DEFAULT_INVALID_DOUBLE if source is NULL, otherwise the func(source) value.
  */
 double returnValueFrom(SPBPQueue source, SPListElement (*func)(SPBPQueue)){
 	SPListElement item;
 	double returnValue;
 	if (source == NULL)
-		return -1;
+		return DEFAULT_INVALID_DOUBLE;
 	item = (*func)(source);
 	returnValue = spListElementGetValue(item);
 	spListElementDestroy(item);

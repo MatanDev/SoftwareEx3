@@ -5,6 +5,14 @@
 #include "../SPLogger.h" //TODO - remove at production
 #include <stdlib.h>
 #include <time.h>
+
+#define RANDOM_INDEX_RANGE 300
+#define RANDOM_VALUE_BALANCER 100
+#define RANDOM_SIZE_RANGE 500
+#define RANDOM_CAPACITY_RANGE 500
+#define RANDOM_SORT_TEST_COUNT 200
+
+
 /*
 static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SP_BPQUEUE_MSG message;
@@ -56,8 +64,8 @@ static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SPBPQueue queue = spBPQueueCreate(capacity);
 //	printf("Q : {");
 	for (i = 0; i < size; i++) {
-		val = (double)rand()/((double)RAND_MAX/100);
-		index = (int)(rand() % 300);
+		val = (double)rand()/((double)RAND_MAX/RANDOM_VALUE_BALANCER);
+		index = (int)(rand() % RANDOM_INDEX_RANGE);
 		//printf("index : %d | val : %f \n",index,val);
 
 		fflush(NULL);
@@ -119,7 +127,6 @@ static bool testBPQueueCreate() {
 
 	return true;
 }
-
 
 static bool testBPQueueCopy() {
 	ASSERT_TRUE(spBPQueueCopy(NULL) == NULL); // test source is NULL
@@ -214,19 +221,35 @@ static bool testBPQueueMaxSize() {
 	spListElementDestroy(e2);
 	spListElementDestroy(e3);
 	spListElementDestroy(e4);
-
-	// test maxsize 0
-	queue2 = spBPQueueCreate(0);
-	ASSERT_TRUE(0 == spBPQueueGetMaxSize(queue2));
-	//ASSERT_TRUE(SP_BPQUEUE_FULL == spBPQueueEnqueue(queue2));
-	ASSERT_TRUE(SP_BPQUEUE_SUCCESS == spBPQueueEnqueue(queue2));
-	ASSERT_TRUE(0 == spBPQueueSize(queue2));
-	ASSERT_TRUE(spBPQueueIsFull(queue2));
-	ASSERT_TRUE(spBPQueueIsEmpty(queue2));
-
 	return true;
 }
 
+//test that a queue if max size 0 is functioning correctly
+static bool testBPQueueMaxSize0() {
+	SPListElement e1 = spListElementCreate(1, 1.0);
+	SPBPQueue queue;
+
+	queue = spBPQueueCreate(0);
+
+	ASSERT_TRUE(0 == spBPQueueGetMaxSize(queue));
+	ASSERT_TRUE(0 == spBPQueueSize(queue));
+	ASSERT_TRUE(spBPQueueIsFull(queue));
+	ASSERT_TRUE(spBPQueueIsEmpty(queue));
+
+
+	ASSERT_TRUE(SP_BPQUEUE_EMPTY == spBPQueueEnqueue(queue));
+	ASSERT_TRUE(SP_BPQUEUE_FULL == spBPQueueDequeue(queue,e1));
+
+
+	ASSERT_TRUE(0 == spBPQueueGetMaxSize(queue));
+	ASSERT_TRUE(0 == spBPQueueSize(queue));
+	ASSERT_TRUE(spBPQueueIsFull(queue));
+	ASSERT_TRUE(spBPQueueIsEmpty(queue));
+
+	spListElementDestroy(e1);
+	spBPQueueDestroy(queue);
+	return true;
+}
 
 static bool testBPQueuePeekFirstandLast() {
 	SPBPQueue queue = spBPQueueCreate(0);
@@ -364,13 +387,13 @@ static bool testBPQueueDestroy() {
 static bool testSorted(){
 	SPListElement prevElement = NULL, currentElement = NULL;
 	SP_BPQUEUE_MSG message;
-	int size,max_size, counter,i, numOfTests = 200;
+	int size,max_size, counter,i, numOfTests = RANDOM_SORT_TEST_COUNT;
 	SPBPQueue queue = NULL;
 	for (i = 0 ; i< numOfTests ; i++)
 	{
 		//printf("Test #%d\n",i);
-		size = (int)(rand() % 500);
-		max_size = (int)(rand() % 500);
+		size = (int)(rand() % RANDOM_SIZE_RANGE);
+		max_size = (int)(rand() % RANDOM_CAPACITY_RANGE);
 		//printf("size: %d | max_size: %d \n",size,max_size);
 		counter = 0;
 		ASSERT_TRUE(queue == NULL);
@@ -413,7 +436,7 @@ static bool testSorted(){
 	return true;
 }
 
-static bool testCase1()
+static bool testCase1() //TODO - Romove at production - this tests nothing
 {
 	SPListElement e1 = spListElementCreate(49 , 60.628071);
 	SPListElement e2 = spListElementCreate(95 , 0.589007);
@@ -436,7 +459,6 @@ static bool testCase1()
 	spListElementDestroy(e8); e8 = NULL;
 	spListElementDestroy(e9); e9 = NULL;
 	return true;
-
 }
 /*
 void interactive_test(){
@@ -474,6 +496,7 @@ int main() {
 	RUN_TEST(testSorted);
 	RUN_TEST(testBPQueueIsEmptyFull);
 	RUN_TEST(testBPQueueEnqueue);
+	RUN_TEST(testBPQueueMaxSize0);
 	//interactive_test();
 	return 0;
 }
