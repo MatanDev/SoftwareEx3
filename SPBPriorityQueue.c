@@ -171,6 +171,8 @@ SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
 		updateMax = true;
 	}
 
+	// if we get here we assume we never reached the end of the list (meaning null)
+	// because we assume spBPQueueSize is valid
 	spListRemoveCurrent(source->queue);
 
 	if (updateMax){
@@ -190,10 +192,11 @@ SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
  * The method inserts an item to the queue before a given item,
  * assuming the insertion is not at the end of the queue and the queue is not empty
  * Pre-assumptions:
- * - source != NULL and source->list not empty and element != NULL and currElemInQueue != NULL
+ * - source != NULL and source->list not empty and element != NULL
+ * and the current iterator of the internal list in the queue is not null
  *  @param source - the given queue from which we should insert the item
  *  @param element - the element we should insert to the queue
- *  @param currElemInQueue - a pointer to the current iterator of the internal list in the queue
+ *  //@param currElemInQueue - a pointer to the current iterator of the internal list in the queue
  *  @return
  *  SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
@@ -203,14 +206,9 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyNotLast(SPBPQueue source,
 	SP_LIST_MSG retVal;
 	retVal = spListInsertBeforeCurrent(source->queue, element);
 
-	//TODO - decide what to do with invalid current
-	if (retVal == SP_LIST_INVALID_CURRENT || retVal == SP_LIST_OUT_OF_MEMORY)
+	if (retVal == SP_LIST_OUT_OF_MEMORY)
 		return SP_BPQUEUE_OUT_OF_MEMORY;
 
-	// TODO - needs to be we were on full capacity
-	// 2 options - one: check if we are over capacity by 1
-	// two: change the ordering to check this first and then insert
-	//if (spBPQueueIsFull(source)) // we are at full capacity
 	if (spBPQueueSize(source) > spBPQueueGetMaxSize(source))
 		return spBPQueueHandleFullCapacity(source);
 
@@ -260,7 +258,6 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement el
 SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElement){
 	SPListElement currElemInQueue = spListGetFirst(source->queue);
 
-	// TODO - check if < or <=
 	while (currElemInQueue != NULL && spListElementCompare(currElemInQueue, newElement) <= 0)
 	{
 		currElemInQueue = spListGetNext(source->queue);
@@ -292,8 +289,8 @@ SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element)
 
 	if (spBPQueueIsEmpty(source))
 		return spBPQueueInsertIfEmpty(source,element);
-	//insert to a non empty queue
 
+	//insert to a non empty queue
 	return spBPQueueInsertNotEmpty(source, element);
 }
 

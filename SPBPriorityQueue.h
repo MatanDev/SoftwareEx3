@@ -118,7 +118,8 @@ int spBPQueueGetMaxSize(SPBPQueue source);
  * @return
  * 	SP_BPQUEUE_OUT_OF_MEMORY - in case of memory allocation error
  *	SP_BPQUEUE_FULL - in case the queue is at full capacity and the requested
- *					  element is greater than than all the elements in the queue
+ *					  element is greater than all the elements in the queue or equal
+ *					  to maximal element in the queue.
  *	SP_BPQUEUE_INVALID_ARGUMENT - in case source is NULL or element is NULL
  *	SP_BPQUEUE_SUCCESS - in case the element was successfully inserted to the queue
  */
