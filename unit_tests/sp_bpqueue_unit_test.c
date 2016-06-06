@@ -354,20 +354,28 @@ static bool testBPQueueIsEmptyFull() {
 
 //Test for Enqueue
 static bool testBPQueueEnqueue() {
-	SPListElement e1 = NULL, e2 = NULL, e3 = NULL , e4 = NULL, e5 = NULL, temp = NULL;
+	SPListElement e1 = NULL, e2 = NULL, e3 = NULL,
+			e4 = NULL, e5 = NULL, temp = NULL;
 	SPBPQueue queue = NULL;
 	SP_BPQUEUE_MSG message;
 
-	e1 = spListElementCreate(1, 1.0);
+	e1 = spListElementCreate(1, 1.1);
 	e2 = spListElementCreate(2, 2.0);
 	e3 = spListElementCreate(3, 3.0);
 	e4 = spListElementCreate(4, 4.0);
-	e5 = spListElementCreate(5, 5.0);
+	e5 = spListElementCreate(5, 5.82);
 	queue = quickQueue(4, 4, e1, e2, e4, e5);
 
 	temp = spBPQueuePeekLast(queue);
 	ASSERT_TRUE(spListElementCompare(temp, e5) == 0);
 	spListElementDestroy(temp);
+
+	temp = spBPQueuePeek(queue);
+	ASSERT_TRUE(spListElementCompare(temp, e1) == 0);
+	spListElementDestroy(temp);
+
+	ASSERT_TRUE(spBPQueueMaxValue(queue) == 5.82);
+	ASSERT_TRUE(spBPQueueMinValue(queue) == 1.1);
 
 	message = spBPQueueEnqueue(queue, e3);
 	ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);

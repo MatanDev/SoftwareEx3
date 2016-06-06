@@ -143,20 +143,17 @@ SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement
 
 /*
  * The method removes the last element in the queue (to prevent capacity overflow)
- * The method is given a queue and an element
- * representing the current list iterator of the internal list used by the queue
+ * The method is given a queue
  * it iterate over the list items, removes the last one (the maximum) and update the current maximum
  * Pre-assumptions
- *  source != NULL, list is at full capacity and currElemInQueue != NULL
- *  @param source - the given queue from which we should remove the last item
- *  @param currElemInQueue - a pointer to the current iterator of the internal list in the queue
- *   *  @return
- *  SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
+ *  	source != NULL, list is at full capacity
+ * @param source - the given queue from which we should remove the last item
+ * @return
+ * 	SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
 SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
 	int i;
-	bool updateMax = false;
 	SPListElement currElemInQueue, prevElemInQueue;
 	currElemInQueue = spListGetFirst(source->queue);
 	prevElemInQueue = currElemInQueue;
@@ -167,20 +164,14 @@ SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
 		currElemInQueue = spListGetNext(source->queue);
 	}
 
-	if (spListElementCompare(currElemInQueue, source->maxElement) >= 0){
-		updateMax = true;
-	}
-
 	// if we get here we assume we never reached the end of the list (meaning null)
 	// because we assume spBPQueueSize is valid
 	spListRemoveCurrent(source->queue);
 
-	if (updateMax){
-		spListElementDestroy(source->maxElement);
-		source->maxElement = spListElementCopy(prevElemInQueue);
-		if (source->maxElement == NULL)
-			return SP_BPQUEUE_OUT_OF_MEMORY;
-	}
+	spListElementDestroy(source->maxElement);
+	source->maxElement = spListElementCopy(prevElemInQueue);
+	if (source->maxElement == NULL)
+		return SP_BPQUEUE_OUT_OF_MEMORY;
 
 	return SP_BPQUEUE_SUCCESS;
 
@@ -192,11 +183,10 @@ SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
  * The method inserts an item to the queue before a given item,
  * assuming the insertion is not at the end of the queue and the queue is not empty
  * Pre-assumptions:
- * - source != NULL and source->list not empty and element != NULL
+ * source != NULL and source->list not empty and element != NULL
  * and the current iterator of the internal list in the queue is not null
  *  @param source - the given queue from which we should insert the item
  *  @param element - the element we should insert to the queue
- *  //@param currElemInQueue - a pointer to the current iterator of the internal list in the queue
  *  @return
  *  SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
@@ -229,8 +219,6 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyNotLast(SPBPQueue source,
 SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement element) {
 	SP_LIST_MSG retVal;
 	retVal = spListInsertLast(source->queue, element);
-
-	assert(spBPQueueSize(source)<=spBPQueueGetMaxSize(source));
 
 	if (retVal == SP_LIST_OUT_OF_MEMORY)
 		return SP_BPQUEUE_OUT_OF_MEMORY;

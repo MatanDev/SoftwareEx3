@@ -164,7 +164,7 @@ SP_LOGGER_MSG spLoggerPrint(enum sp_logger_level_t logType, const char* msg, con
 		const char* function, const int line) {
 	if (logger == NULL)
 		return SP_LOGGER_UNDIFINED;
-	if (msg == NULL || file == NULL || function == NULL || line < 0) // TODO - check if we need to check the args first or the privilege
+	if (msg == NULL || file == NULL || function == NULL || line < 0)
 		return SP_LOGGER_INVAlID_ARGUMENT;
 	if (!verifyWritePrivileges(logType))
 		return SP_LOGGER_SUCCESS;
