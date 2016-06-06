@@ -1,5 +1,5 @@
-#include "../SPPoint.h"
 #include "unit_test_util.h"
+#include "../SPPoint.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

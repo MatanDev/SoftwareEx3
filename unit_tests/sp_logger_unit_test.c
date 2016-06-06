@@ -1,8 +1,8 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include "unit_test_util.h" //SUPPORTING MACROS ASSERT_TRUE/ASSERT_FALSE etc..
 #include "../SPLogger.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 
 // This is a helper function which checks if two files are identical
