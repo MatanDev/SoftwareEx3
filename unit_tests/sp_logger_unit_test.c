@@ -159,7 +159,7 @@ static bool basicLoggerLinesTest() {
 	ASSERT_TRUE(identicalFiles(testFile,expectedFile));
 	return true;
 }
-/*
+
 int main() {
 	RUN_TEST(basicLoggerTest);
 	RUN_TEST(basicLoggerErrorTest);
@@ -173,4 +173,3 @@ int main() {
 	return 0;
 }
 
-*/

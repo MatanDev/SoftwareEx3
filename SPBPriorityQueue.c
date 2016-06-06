@@ -30,8 +30,7 @@ struct sp_bp_queue_t {
  * 	NULL - If allocations failed or maxSize < 0 or createNewList flag is off and source_queue is NULL
  * 	A new queue in case of success, with respect to the createNewList flag
  */
-SPBPQueue spBPQueueCreateWrapper(int maxSize, SPBPQueue source_queue, bool createNewList)
-{
+SPBPQueue spBPQueueCreateWrapper(int maxSize, SPBPQueue source_queue, bool createNewList) {
 	SPBPQueue newQueue;
 
 	if (maxSize < 0)
@@ -45,13 +44,11 @@ SPBPQueue spBPQueueCreateWrapper(int maxSize, SPBPQueue source_queue, bool creat
 	newQueue->capacity = maxSize;
 
 
-	if (createNewList)
-	{
+	if (createNewList) {
 		newQueue->queue = spListCreate();
 		newQueue->maxElement = NULL;
 	}
-	else
-	{
+	else {
 		newQueue->queue = spListCopy(source_queue->queue);
 		newQueue->maxElement = spListElementCopy(source_queue->maxElement);
 	}
@@ -63,24 +60,21 @@ SPBPQueue spBPQueueCreateWrapper(int maxSize, SPBPQueue source_queue, bool creat
 	return newQueue;
 }
 
-SPBPQueue spBPQueueCreate(int maxSize)
-{
+SPBPQueue spBPQueueCreate(int maxSize) {
 	if (maxSize < 0)
 		return NULL;
 
 	return spBPQueueCreateWrapper(maxSize, NULL, true);
 }
 
-SPBPQueue spBPQueueCopy(SPBPQueue source)
-{
+SPBPQueue spBPQueueCopy(SPBPQueue source) {
 	if (source == NULL)
 		return NULL;
 
 	return spBPQueueCreateWrapper(source->capacity, source , false);
 }
 
-void spBPQueueDestroy(SPBPQueue source)
-{
+void spBPQueueDestroy(SPBPQueue source) {
 	if (source != NULL) {
 		if (source->queue != NULL)
 			spListDestroy(source->queue);
@@ -91,27 +85,23 @@ void spBPQueueDestroy(SPBPQueue source)
 	}
 }
 
-void spBPQueueClear(SPBPQueue source)
-{
-	if (source != NULL && source->queue != NULL)
-	{
+void spBPQueueClear(SPBPQueue source) {
+	if (source != NULL && source->queue != NULL) {
 		spListClear(source->queue);
-		if (source->maxElement){
+		if (source->maxElement) {
 			spListElementDestroy(source->maxElement);
 			source->maxElement = NULL;
 		}
 	}
 }
 
-int spBPQueueSize(SPBPQueue source)
-{
+int spBPQueueSize(SPBPQueue source) {
 	if(source == NULL || source->queue == NULL)
 		return DEFAULT_INVALID_NUMBER;
 	return spListGetSize(source->queue);
 }
 
-int spBPQueueGetMaxSize(SPBPQueue source)
-{
+int spBPQueueGetMaxSize(SPBPQueue source) {
 	if (source == NULL)
 		return DEFAULT_INVALID_NUMBER;
 	return source->capacity;
@@ -127,7 +117,7 @@ int spBPQueueGetMaxSize(SPBPQueue source)
  * SP_BPQUEUE_OUT_OF_MEMORY - in case of allocation error
  * SP_BPQUEUE_SUCCESS - in case the new is inserted correctly
  */
-SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement){
+SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement) {
 	SP_LIST_MSG retVal;
 	retVal = spListInsertFirst(source->queue, newElement);
 	if (retVal == SP_LIST_OUT_OF_MEMORY)
@@ -158,8 +148,7 @@ SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
 	currElemInQueue = spListGetFirst(source->queue);
 	prevElemInQueue = currElemInQueue;
 
-	for (i=1;i<spBPQueueSize(source);i++)
-	{
+	for (i=1;i<spBPQueueSize(source);i++) {
 		prevElemInQueue = currElemInQueue;
 		currElemInQueue = spListGetNext(source->queue);
 	}
@@ -243,16 +232,15 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement el
  *  SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
-SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElement){
+SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElement) {
 	SPListElement currElemInQueue = spListGetFirst(source->queue);
 
-	while (currElemInQueue != NULL && spListElementCompare(currElemInQueue, newElement) <= 0)
-	{
+	while (currElemInQueue != NULL && spListElementCompare(currElemInQueue, newElement) <= 0) {
 		currElemInQueue = spListGetNext(source->queue);
 	}
 
-	if (currElemInQueue != NULL) // currElemInQueue > newElement
-	{
+	// currElemInQueue > newElement
+	if (currElemInQueue != NULL) {
 		currElemInQueue = NULL;
 		return spBPQueueInsertNotEmptyNotLast(source, newElement);
 	}
@@ -261,8 +249,7 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElemen
 	return spBPQueueInsertNotEmptyButLast(source, newElement);
 }
 
-SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element)
-{
+SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element) {
 	if (source == NULL || source->queue == NULL || element == NULL)
 		return SP_BPQUEUE_INVALID_ARGUMENT;
 
@@ -271,7 +258,7 @@ SP_BPQUEUE_MSG spBPQueueEnqueue(SPBPQueue source, SPListElement element)
 
 
 	// the list is full and the element is greater than all the current items
-	if (spBPQueueIsFull(source) && spListElementCompare(element, source->maxElement) >= 0){
+	if (spBPQueueIsFull(source) && spListElementCompare(element, source->maxElement) >= 0) {
 		return SP_BPQUEUE_FULL;
 	}
 
@@ -310,16 +297,18 @@ SP_BPQUEUE_MSG spBPQueueDequeue(SPBPQueue source) {
 	return SP_BPQUEUE_SUCCESS;
 }
 
-SPListElement spBPQueuePeek(SPBPQueue source){
+SPListElement spBPQueuePeek(SPBPQueue source) {
 	SPListElement first;
+
 	if (source == NULL)
 		return NULL;
+
 	first = spListGetFirst(source->queue);
+
 	return spListElementCopy(first);
 }
 
-SPListElement spBPQueuePeekLast(SPBPQueue source)
-{
+SPListElement spBPQueuePeekLast(SPBPQueue source) {
 	if (source == NULL)
 		return NULL;
 	return spListElementCopy(source->maxElement);
@@ -334,35 +323,34 @@ SPListElement spBPQueuePeekLast(SPBPQueue source)
  * @return
  * DEFAULT_INVALID_DOUBLE if source is NULL, otherwise the func(source) value.
  */
-double returnValueFrom(SPBPQueue source, SPListElement (*func)(SPBPQueue)){
+double returnValueFrom(SPBPQueue source, SPListElement (*func)(SPBPQueue)) {
 	SPListElement item;
 	double returnValue;
+
 	if (source == NULL)
 		return DEFAULT_INVALID_NUMBER;
+
 	item = (*func)(source);
 	returnValue = spListElementGetValue(item);
 	spListElementDestroy(item);
+
 	return returnValue;
 }
 
-double spBPQueueMinValue(SPBPQueue source)
-{
+double spBPQueueMinValue(SPBPQueue source) {
 	return returnValueFrom(source, &spBPQueuePeek);
 }
 
-double spBPQueueMaxValue(SPBPQueue source)
-{
+double spBPQueueMaxValue(SPBPQueue source) {
 	return returnValueFrom(source, &spBPQueuePeekLast);
 }
 
-bool spBPQueueIsEmpty(SPBPQueue source)
-{
+bool spBPQueueIsEmpty(SPBPQueue source) {
 	assert(source);
 	return (spBPQueueSize(source) == 0);
 }
 
-bool spBPQueueIsFull(SPBPQueue source)
-{
+bool spBPQueueIsFull(SPBPQueue source) {
 	assert(source);
 	return (spBPQueueSize(source) == spBPQueueGetMaxSize(source));
 }

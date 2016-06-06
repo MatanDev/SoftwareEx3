@@ -20,7 +20,7 @@ static SPBPQueue quickRandomQueue(int capacity, int size) {
 	SPListElement elem, temp;
 	SPBPQueue queue = spBPQueueCreate(capacity);
 
-	for (i = 0; i < size; i++) {
+	for (i = 0; i < size; i++) 	{
 		val = (double)rand()/((double)RAND_MAX/RANDOM_VALUE_BALANCER);
 		index = (int)(rand() % RANDOM_INDEX_RANGE);
 
@@ -31,7 +31,7 @@ static SPBPQueue quickRandomQueue(int capacity, int size) {
 		ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS || message == SP_BPQUEUE_FULL);
 		spListElementDestroy(elem);
 		elem = NULL;
-		if (capacity > 0){
+		if (capacity > 0) {
 			temp = spBPQueuePeekLast(queue);
 			ASSERT_TRUE(temp != NULL);
 			spListElementDestroy(temp);
@@ -523,14 +523,13 @@ static bool testBPQueueDestroy() {
 }
 
 //Test for the queue ordered invariant, also tests the enqueue and dequeue
-static bool testBPQueueSorted(){
+static bool testBPQueueSorted() {
 	SPListElement prevElement = NULL, currentElement = NULL;
 	SP_BPQUEUE_MSG message;
 	int size,max_size, counter,i, numOfTests = RANDOM_SORT_TEST_COUNT;
 	SPBPQueue queue = NULL;
 
-	for (i = 0 ; i< numOfTests ; i++)
-	{
+	for (i = 0 ; i< numOfTests ; i++) {
 		size = (int)(rand() % RANDOM_SIZE_RANGE);
 		max_size = (int)(rand() % RANDOM_CAPACITY_RANGE);
 
@@ -539,13 +538,13 @@ static bool testBPQueueSorted(){
 		queue = quickRandomQueue(max_size, size);
 		ASSERT_TRUE(queue != NULL);
 
-		if (!spBPQueueIsEmpty(queue)){
+		if (!spBPQueueIsEmpty(queue)) {
 			currentElement = spBPQueuePeek(queue);
 			message	= spBPQueueDequeue(queue);
 			ASSERT_TRUE(message == SP_BPQUEUE_SUCCESS);
 			counter++;
 		}
-		while (!spBPQueueIsEmpty(queue)){
+		while (!spBPQueueIsEmpty(queue)) {
 			spListElementDestroy(prevElement);
 			prevElement = NULL;
 			prevElement = spListElementCopy(currentElement);
@@ -591,4 +590,3 @@ int main() {
 
 	return 0;
 }
-

@@ -43,10 +43,13 @@ double* copyData(double* data, int size) {
 SPPoint spPointCreate(double* data, int dim, int index) {
 	if (data == NULL) //data is null
 		return NULL;
+
 	if (dim <= 0) //dimension illegal
 		return NULL;
+
 	if (index < 0) //index illegal
 		return NULL;
+
 	SPPoint item = (SPPoint)calloc(1,sizeof(struct sp_point_t));
 	if (item == NULL) // allocation error
 		return NULL;
@@ -54,6 +57,7 @@ SPPoint spPointCreate(double* data, int dim, int index) {
 	item->data = copyData(data,dim);
 	if (item->data == NULL)
 		return NULL; //allocation error
+
 	item->dim = dim;
 	item->index = index;
 
@@ -68,12 +72,12 @@ SPPoint spPointCopy(SPPoint source) {
 }
 
 void spPointDestroy(SPPoint point) {
-	if (point != NULL)
-	{
-		if (point->data != NULL){
+	if (point != NULL) {
+		if (point->data != NULL) {
 			free(point->data);
 			point->data = NULL;
 		}
+
 		free(point);
 		point = NULL;
 	}
@@ -100,7 +104,7 @@ double spPointL2SquaredDistance(SPPoint p, SPPoint q) {
 
 	assert(p != NULL && q != NULL && p->dim == q->dim);
 
-	for (dimIndex = 0;dimIndex < p->dim ; dimIndex++){
+	for (dimIndex = 0;dimIndex < p->dim ; dimIndex++) {
 		currentDist = p->data[dimIndex]-q->data[dimIndex];
 		l2Dist += currentDist * currentDist;
 	}

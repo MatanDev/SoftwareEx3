@@ -72,12 +72,13 @@ void spLoggerDestroy() {
  * SP_LOGGER_SUCCESS			- otherwise
  */
 SP_LOGGER_MSG spLoggerPrintFormmatedString(const char* msg, ...) {
+    va_list args;
+
 	if (logger == NULL)
 		return SP_LOGGER_UNDIFINED;
 	if (msg == NULL)
 		return SP_LOGGER_INVAlID_ARGUMENT;
 
-    va_list args;
     va_start(args, msg);
 
 	if (vfprintf(logger->outputChannel, msg, args) < 0)
@@ -164,10 +165,13 @@ SP_LOGGER_MSG spLoggerPrint(enum sp_logger_level_t logType, const char* msg,
 		const char* file, const char* function, const int line) {
 	if (logger == NULL)
 		return SP_LOGGER_UNDIFINED;
+
 	if (msg == NULL || file == NULL || function == NULL || line < 0)
 		return SP_LOGGER_INVAlID_ARGUMENT;
+
 	if (!verifyWritePrivileges(logType))
 		return SP_LOGGER_SUCCESS;
+
 	return spLoggerPrintFormmatedString(GENERAL_MESSAGE_SKELETON,
 			getLoggerNameFromType(logType), file,function,line,msg);
 }
@@ -186,10 +190,13 @@ SP_LOGGER_MSG spLoggerPrintWarning(const char* msg, const char* file,
 SP_LOGGER_MSG spLoggerPrintInfo(const char* msg) {
 	if (logger == NULL)
 		return SP_LOGGER_UNDIFINED;
+
 	if (msg == NULL)
 		return SP_LOGGER_INVAlID_ARGUMENT;
+
 	if (!verifyWritePrivileges(SP_LOGGER_INFO_WARNING_ERROR_LEVEL))
 		return SP_LOGGER_SUCCESS;
+
 	return spLoggerPrintFormmatedString(SHORT_MESSAGE_SKELETON,INFO_MSG,msg);
 }
 
