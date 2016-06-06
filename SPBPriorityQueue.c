@@ -150,23 +150,24 @@ SP_BPQUEUE_MSG spBPQueueInsertIfEmpty(SPBPQueue source, SPListElement newElement
  *  source != NULL, list is at full capacity and currElemInQueue != NULL
  *  @param source - the given queue from which we should remove the last item
  *  @param currElemInQueue - a pointer to the current iterator of the internal list in the queue
- *   *  @return
+ *  @return
  *  SP_BPQUEUE_OUT_OF_MEMORY - in case of memory error
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
-SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
+SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source, SPListElement currElemInQueue, int currElemIndex) {
 	int i;
 	bool updateMax = false;
-	SPListElement currElemInQueue, prevElemInQueue;
-	currElemInQueue = spListGetFirst(source->queue);
+	SPListElement /*currElemInQueue,*/ prevElemInQueue;
+	//currElemInQueue = spListGetFirst(source->queue);
 	prevElemInQueue = currElemInQueue;
 
-	for (i=1;i<spBPQueueSize(source);i++)
+	for (i = currElemIndex + 1;i<spBPQueueSize(source);i++)
 	{
 		prevElemInQueue = currElemInQueue;
 		currElemInQueue = spListGetNext(source->queue);
 	}
 
+	assert(currElemInQueue != NULL);
 	if (spListElementCompare(currElemInQueue, source->maxElement) >= 0){
 		updateMax = true;
 	}
@@ -202,7 +203,7 @@ SP_BPQUEUE_MSG spBPQueueHandleFullCapacity(SPBPQueue source) {
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
 SP_BPQUEUE_MSG spBPQueueInsertNotEmptyNotLast(SPBPQueue source,
-		SPListElement element) {
+		SPListElement element, SPListElement currElemInQueue, int currElemIndex) {
 	SP_LIST_MSG retVal;
 	retVal = spListInsertBeforeCurrent(source->queue, element);
 
@@ -210,7 +211,7 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyNotLast(SPBPQueue source,
 		return SP_BPQUEUE_OUT_OF_MEMORY;
 
 	if (spBPQueueSize(source) > spBPQueueGetMaxSize(source))
-		return spBPQueueHandleFullCapacity(source);
+		return spBPQueueHandleFullCapacity(source, currElemInQueue, currElemIndex);
 
 	return SP_BPQUEUE_SUCCESS;
 }
@@ -256,17 +257,19 @@ SP_BPQUEUE_MSG spBPQueueInsertNotEmptyButLast(SPBPQueue source, SPListElement el
  *  SP_BPQUEUE_SUCCESS - in case the item was successfully inserted to the queue
  */
 SP_BPQUEUE_MSG spBPQueueInsertNotEmpty(SPBPQueue source, SPListElement newElement){
+	int currElemIndex = 0;
 	SPListElement currElemInQueue = spListGetFirst(source->queue);
 
 	while (currElemInQueue != NULL && spListElementCompare(currElemInQueue, newElement) <= 0)
 	{
 		currElemInQueue = spListGetNext(source->queue);
+		currElemIndex++;
 	}
 
 	if (currElemInQueue != NULL) // currElemInQueue > newElement
 	{
-		currElemInQueue = NULL;
-		return spBPQueueInsertNotEmptyNotLast(source, newElement);
+		//currElemInQueue = NULL;
+		return spBPQueueInsertNotEmptyNotLast(source, newElement, currElemInQueue, currElemIndex);
 	}
 
 	// we are not at full capacity because we took care of it before
