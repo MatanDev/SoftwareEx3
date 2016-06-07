@@ -1,0 +1,28 @@
+PrintMsg1
+---WARNING---
+- file: sp_logger_unit_test.c
+- function: basicLoggerPrintMsgTest
+- line: 130
+- message: MSGB
+---INFO---
+- message: MSGC
+---ERROR---
+- file: sp_logger_unit_test.c
+- function: basicLoggerPrintMsgTest
+- line: 132
+- message: MSGA
+PrintMsg2
+PrintMsg3
+PrintMsg4
+---DEBUG---
+- file: sp_logger_unit_test.c
+- function: basicLoggerPrintMsgTest
+- line: 136
+- message: MSGD
+PrintMsg5
+
+---DEBUG---
+- file: sp_logger_unit_test.c
+- function: basicLoggerPrintMsgTest
+- line: 139
+- message: 
